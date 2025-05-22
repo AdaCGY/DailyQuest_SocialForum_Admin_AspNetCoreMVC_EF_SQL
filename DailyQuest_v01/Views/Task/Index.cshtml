@@ -1,0 +1,39 @@
+﻿@model IEnumerable<DailyQuest_v01.Models.ViewModel.TaskTable>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>任務清單</h1>
+
+<div class="row">
+    <div class="col-4">
+        <a class="fs-3 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="#">
+            任務新增
+        </a>
+    </div>
+    <div class="col-4"></div>
+    <div class="col-4">
+        <input type="search" class="form-control" id="inputSearch" placeholder="關鍵字搜尋" />
+    </div>
+</div>
+<div class="table-responsive">
+    <table class="table table-hover text-nowrap align-middle">
+        <thead class="table-light text-center">
+            <tr>
+                <th></th>
+                <th>@Html.DisplayNameFor(model => model.TaskTypeName)</th>
+                <th>@Html.DisplayNameFor(model => model.TaskLabelName)</th>
+                <th>@Html.DisplayNameFor(model => model.TaskContent)</th>
+                <th>@Html.DisplayNameFor(model => model.SubTaskId)</th>
+                <th>@Html.DisplayNameFor(model => model.ExpectDate)</th>
+                <th>@Html.DisplayNameFor(model => model.SetPeriod)</th>
+                <th>@Html.DisplayNameFor(model => model.CreateDate)</th>
+                <th>@Html.DisplayNameFor(model => model.FinishDate)</th>
+                <th>@Html.DisplayNameFor(model => model.TaskResultName)</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+
+
