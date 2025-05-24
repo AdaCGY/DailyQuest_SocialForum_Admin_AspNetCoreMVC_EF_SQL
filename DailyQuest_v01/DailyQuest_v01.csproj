@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\jquery-validate\**" />
+    <Compile Remove="wwwroot\jquery-validation-unobtrusive\**" />
+    <Content Remove="wwwroot\jquery-validate\**" />
+    <Content Remove="wwwroot\jquery-validation-unobtrusive\**" />
+    <EmbeddedResource Remove="wwwroot\jquery-validate\**" />
+    <EmbeddedResource Remove="wwwroot\jquery-validation-unobtrusive\**" />
+    <None Remove="wwwroot\jquery-validate\**" />
+    <None Remove="wwwroot\jquery-validation-unobtrusive\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
       <PrivateAssets>all</PrivateAssets>
