@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using DailyQuest_v01.Models;
+using DailyQuest_v01.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,9 +22,14 @@ namespace DailyQuest_v01.Controllers
             return View();
         }
 
-        public IActionResult Social_Manage()
+        public async Task<IActionResult> Social_Manage()
         {
-            return View();
+            var viewmodel = new Social_CategoriesManage
+            {
+                PostCategories = await _context.PostCategories.ToListAsync(),
+                ReportCategories = await _context.ReportCategories.ToListAsync()
+            };
+            return View(viewmodel);
         }
 
         public IActionResult Privacy()
