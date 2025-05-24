@@ -22,11 +22,12 @@ namespace DailyQuest_v01.Controllers
             return View();
         }
 
+        [HttpGet]
         public async Task<IActionResult> Categories()
         {
             var viewmodel = new CategoriesViewModels
             {
-                PostCategories = await _context.PostCategories.Select(c => new PostCategoriesViewModels
+                PostCategories = await _context.PostCategories.OrderBy(i=>i.CategoryId).Select(c => new PostCategoriesViewModels
                 {
                     CategoryId = c.CategoryId,
                     CategoryName = c.CategoryName
@@ -42,6 +43,30 @@ namespace DailyQuest_v01.Controllers
             };
             return View(viewmodel);
         }
+
+        [HttpGet]
+        public IActionResult CreatePostCategory()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePostCategory(PostCategory postCategories)
+        {
+            if (ModelState.IsValid) // 驗證資料是否正確
+            {
+                _context.PostCategories.Add(postCategories);// 新增這筆分類資料
+                await _context.SaveChangesAsync(); // 寫入資料庫
+                return RedirectToAction("Categories"); //導回管理主頁
+            }
+            return NoContent();
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> CreateReportCategory()
+        //{
+
+        //}
 
         public IActionResult Privacy()
         {
