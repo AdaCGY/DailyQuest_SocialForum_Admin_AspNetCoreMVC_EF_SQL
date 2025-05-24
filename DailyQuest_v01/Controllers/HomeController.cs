@@ -24,7 +24,7 @@ namespace DailyQuest_v01.Controllers
 
         public async Task<IActionResult> Social_Manage()
         {
-            var viewmodel = new Social_CategoriesManage
+            var viewmodel = new SocialCategoriesManageViewModels
             {
                 PostCategories = await _context.PostCategories.ToListAsync(),
                 ReportCategories = await _context.ReportCategories.ToListAsync()
