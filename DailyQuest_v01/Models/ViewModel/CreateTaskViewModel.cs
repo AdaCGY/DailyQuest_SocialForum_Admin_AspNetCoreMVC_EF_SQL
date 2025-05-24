@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace DailyQuest_v01.Models.ViewModel
 {
-    public class TaskTable
+    public class CreateTaskViewModel
     {
         [Display(Name = "任務類型")]
         public string TaskTypeName { get; set; } = null!;
@@ -19,8 +20,6 @@ namespace DailyQuest_v01.Models.ViewModel
         public string? SetPeriod { get; set; }
         [Display(Name = "發布時間")]
         public DateTime CreateDate { get; set; }
-        [Display(Name = "完成日")]
-        public DateTime? FinishDate { get; set; }
         [Display(Name = "任務結果")]
         public string TaskResultName { get; set; } = null!;
     }
