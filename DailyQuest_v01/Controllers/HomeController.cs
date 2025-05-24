@@ -8,8 +8,10 @@ namespace DailyQuest_v01.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly DailyQuestDbContext _context;
+        public HomeController(ILogger<HomeController> logger,DailyQuestDbContext context)
         {
+            _context = context;
             _logger = logger;
         }
 
