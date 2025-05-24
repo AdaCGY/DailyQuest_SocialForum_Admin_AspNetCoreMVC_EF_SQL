@@ -24,10 +24,21 @@ namespace DailyQuest_v01.Controllers
 
         public async Task<IActionResult> Social_Manage()
         {
-            var viewmodel = new SocialCategoriesManageViewModels
+            var viewmodel = new CategoriesViewModels
             {
-                PostCategories = await _context.PostCategories.ToListAsync(),
-                ReportCategories = await _context.ReportCategories.ToListAsync()
+                PostCategories = await _context.PostCategories.Select(c => new PostCategoriesViewModels
+                {
+                    CategoryId = c.CategoryId,
+                    CategoryName = c.CategoryName
+                }).ToListAsync(),
+
+                ReportCategories = await _context.ReportCategories.Select(r => new ReportsCategoriesViewmodels
+                {
+                    ReportCategoryId = r.ReportCategoryId,
+                    ReportCategoryName = r.ReportCategoryName,
+                    Description = r.Description,
+                    CreatedAt = r.CreatedAt
+                }).ToListAsync(),
             };
             return View(viewmodel);
         }

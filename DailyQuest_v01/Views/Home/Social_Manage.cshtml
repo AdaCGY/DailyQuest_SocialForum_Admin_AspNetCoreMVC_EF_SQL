@@ -1,29 +1,29 @@
-﻿@model DailyQuest_v01.Models.ViewModels.SocialCategoriesManageViewModels
+﻿@model DailyQuest_v01.Models.ViewModels.CategoriesViewModels
 @{
-    ViewData["Title"] = "Social_Manage";
+    ViewData["Title"] = "社交論壇管理";
 }
 
-<h1>Social_Manage</h1>
+<h1>類別管理</h1>
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">論壇文章貼文類別</h5>
         <div class="table-responsive">
             <table id="zero_config"
-                   class="table table-striped table-bordered">
+            class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>類別ID</th>
-                        <th>類別名稱</th>
+                        <th>@Html.DisplayNameFor(model=>model.PostCategories.First().CategoryId)</th>
+                        <th>@Html.DisplayNameFor(model =>model.PostCategories.First().CategoryName)</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.PostCategories)
-                    {
-                        <tr>
+                        {
+                          <tr>
                             <td>@item.CategoryId</td>
                             <td>@item.CategoryName</td>
-                        </tr>
-                    }
+                          </tr>
+                        }
                 </tbody>
             </table>
         </div>
@@ -37,22 +37,22 @@
                    class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>類別ID</th>
-                        <th>類別名稱</th>
-                        <th>類別說明</th>
-                        <th>創建時間</th>
+                        <th>@Html.DisplayNameFor(model => model.ReportCategories.First().ReportCategoryId)</th>
+                        <th>@Html.DisplayNameFor(model => model.ReportCategories.First().ReportCategoryName)</th>
+                        <th>@Html.DisplayNameFor(model => model.ReportCategories.First().Description)</th>
+                        <th>@Html.DisplayNameFor(model => model.ReportCategories.First().CreatedAt)</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.ReportCategories)
-                    {
+                        {
                         <tr>
                             <td>@item.ReportCategoryId</td>
                             <td>@item.ReportCategoryName</td>
                             <td>@item.Description</td>
                             <td>@item.CreatedAt</td>
                         </tr>
-                    }
+                        }
                 </tbody>
             </table>
         </div>
