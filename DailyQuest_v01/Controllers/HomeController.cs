@@ -22,7 +22,7 @@ namespace DailyQuest_v01.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Social_Manage()
+        public async Task<IActionResult> Categories()
         {
             var viewmodel = new CategoriesViewModels
             {
