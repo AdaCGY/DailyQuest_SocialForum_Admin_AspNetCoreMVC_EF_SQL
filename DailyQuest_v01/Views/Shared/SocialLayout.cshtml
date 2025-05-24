@@ -154,7 +154,7 @@
                                href="javascript:void(0)"
                                aria-expanded="false">
                                 <i class="far fa-paper-plane"></i>
-                                <span>社交論壇管理</span>
+                                <span class="hide-menu">社交論壇管理</span>
                             </a>
 
                             <!-- 子選單（點擊後才導向） -->
@@ -163,21 +163,21 @@
                                     <a class="sidebar-link"
                                        asp-controller="Home" asp-action="Categories">
                                         <i class="far fa-edit"></i>
-                                        <span>類別管理</span>
+                                        <span class="hide-menu">類別管理</span>
                                     </a>
                                 </li>
                                 <li class="sidebar-item">
                                     <a class="sidebar-link"
                                        asp-controller="PostReport" asp-action="Index">
                                         <i class="fas fa-meh"></i>
-                                        <span>檢舉管理</span>
+                                        <span class="hide-menu">檢舉管理</span>
                                     </a>
                                 </li>
                                 <li class="sidebar-item">
                                     <a class="sidebar-link"
                                        asp-controller="Post" asp-action="Index">
                                         <i class="fas fa-list-ul"></i>
-                                        <span>貼文總覽</span>
+                                        <span class="hide-menu">貼文總覽</span>
                                     </a>
                                 </li>
                             </ul>
@@ -191,10 +191,14 @@
     <!-- ============================================================== -->
     <!-- End Left Sidebar - style you can find in sidebar.scss  -->
     <!-- ============================================================== -->
+
     <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
-    <div class="page-wrapper">@RenderBody()</div>
+      <!-- Page wrapper  -->
+      <!-- ============================================================== -->
+        <div class="page-wrapper">@RenderBody()</div>
+        <!-- ============================================================== -->
+        <!-- End Bread crumb and right sidebar toggle -->
+        <!-- ============================================================== -->
     <!-- ============================================================== -->
     <!-- End Container fluid  -->
     <!-- ============================================================== -->
