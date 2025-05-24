@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using DailyQuest_v01.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DailyQuest_v01.Controllers
 {
@@ -16,6 +17,11 @@ namespace DailyQuest_v01.Controllers
         }
 
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult Social_Manage()
         {
             return View();
         }
