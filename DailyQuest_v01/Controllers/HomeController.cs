@@ -85,13 +85,13 @@ namespace DailyQuest_v01.Controllers
             return NoContent();
         }
 
-        [HttpGet]
+        [HttpGet] //新增檢舉類別
         public IActionResult CreateReportCategory()
         {
             return View();
         }
 
-        [HttpPost]
+        [HttpPost] //新增檢舉類別
         public async Task<IActionResult> CreateReportCategory(ReportCategory reportCategory)
         {
             reportCategory.CreatedAt = DateTime.Now;

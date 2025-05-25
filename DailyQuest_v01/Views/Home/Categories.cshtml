@@ -28,12 +28,12 @@
                 <tbody class="customtable">
                     @foreach (var item in Model.PostCategories)
                     {
-                        <tr>
+                        <tr id="row-@item.CategoryId">
                             <td>@item.CategoryId</td>
                             <td>@item.CategoryName</td>
                             <td>
                                 <a asp-controller="Home" asp-action="EditPostCategory" asp-route-id="@item.CategoryId" class="btn btn-outline-info">編輯</a>
-                                <a asp-controller="Home" asp-action="DeletePostCategory" asp-route-id="@item.CategoryId" class="btn btn-outline-danger">刪除</a>
+                                <button class="btn-delete-post btn btn-outline-danger" data-id="@item.CategoryId">刪除</button>
                             </td>
                         </tr>
                     }
@@ -67,7 +67,7 @@
                             <td>@item.CreatedAt</td>
                             <td>
                                 <a asp-action="EditReportCategory" asp-route-id="@item.ReportCategoryId" class="btn btn-outline-info">編輯</a>
-                                <a asp-action="DeleteReportCategory" asp-route-id="@item.ReportCategoryId" class="btn btn-outline-danger">刪除</a>
+                                <button class="btn-delete-report btn btn-outline-danger" data-id="@item.ReportCategoryId">刪除</button>
                             </td>
                         </tr>
                     }
@@ -77,3 +77,28 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    $(document).on('click', '.btn-delete-post', function () {
+    const id = $(this).data('id');
+        $.ajax({
+                url: "https://localhost:7131/API/DeletePostCategory/"+id,
+            type: 'DELETE',
+            success: function (data) {
+                if (data.success) {
+                    if (!confirm("你確定要刪除這個分類嗎？")) return;
+                    $(`#row-${id}`).remove();
+                    alert("貼文類別刪除成功！編號為 "+id);
+                } else {
+                    alert(data.message || "刪除失敗");
+                }
+            },
+            error: function (err) {
+                console.error("錯誤：", err);
+                alert("發生錯誤！");
+            }
+        });
+    });
+</script>
+}
