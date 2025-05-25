@@ -62,11 +62,24 @@ namespace DailyQuest_v01.Controllers
             return NoContent();
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateReportCategory()
-        //{
+        [HttpGet]
+        public IActionResult CreateReportCategory()
+        {
+            return View();
+        }
 
-        //}
+        [HttpPost]
+        public async Task<IActionResult> CreateReportCategory(ReportCategory reportCategory)
+        {
+            reportCategory.CreatedAt = DateTime.Now;
+            if (ModelState.IsValid) // 驗證資料是否正確
+            {
+                _context.ReportCategories.Add(reportCategory); // 新增這筆分類資料
+                await _context.SaveChangesAsync(); // 寫入資料庫
+                return RedirectToAction("Categories"); //導回管理主頁
+            }
+            return NoContent();
+        }
 
         public IActionResult Privacy()
         {
