@@ -31,5 +31,21 @@ namespace DailyQuest_v01.Controllers
 
             return Ok(new { success = true, message = "刪除成功" });
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteReportCategory(int id)
+        {
+            var reportCategory = await _context.ReportCategories.FindAsync(id);
+
+            if (reportCategory == null)
+            {
+                return NotFound(new { success = false, message = "找不到資料" });
+            }
+
+            _context.ReportCategories.Remove(reportCategory);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "刪除成功" });
+        }
     }
 }

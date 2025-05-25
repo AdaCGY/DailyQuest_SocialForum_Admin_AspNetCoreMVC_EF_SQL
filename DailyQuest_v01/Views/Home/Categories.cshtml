@@ -60,7 +60,7 @@
                 <tbody class="customtable">
                     @foreach (var item in Model.ReportCategories)
                     {
-                        <tr>
+                        <tr id="row-@item.ReportCategoryId">
                             <td>@item.ReportCategoryId</td>
                             <td>@item.ReportCategoryName</td>
                             <td>@item.Description</td>
@@ -100,5 +100,26 @@
             }
         });
     });
+
+    $(document).on('click', '.btn-delete-report', function () {
+        const id = $(this).data('id');
+            $.ajax({
+                        url: "https://localhost:7131/API/DeleteReportCategory/"+id,
+                type: 'DELETE',
+                success: function (data) {
+                    if (data.success) {
+                        if (!confirm("你確定要刪除這個檢舉項目嗎？")) return;
+                        $(`#row-${id}`).remove();
+                        alert("檢舉類別項目刪除成功！編號為 "+id);
+                    } else {
+                        alert(data.message || "刪除失敗");
+                    }
+                },
+                error: function (err) {
+                    console.error("錯誤：", err);
+                    alert("發生錯誤！");
+                }
+            });
+        });
 </script>
 }
