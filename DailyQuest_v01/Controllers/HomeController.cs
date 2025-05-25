@@ -50,12 +50,35 @@ namespace DailyQuest_v01.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost] //新增貼文類別
         public async Task<IActionResult> CreatePostCategory(PostCategory postCategories)
         {
             if (ModelState.IsValid) // 驗證資料是否正確
             {
                 _context.PostCategories.Add(postCategories);// 新增這筆分類資料
+                await _context.SaveChangesAsync(); // 寫入資料庫
+                return RedirectToAction("Categories"); //導回管理主頁
+            }
+            return NoContent();
+        }
+
+        [HttpGet] //編輯貼文類別
+        public async Task<IActionResult> EditPostCategory(int id)
+        {
+            var postCategory = await _context.PostCategories.FindAsync(id);
+            if (postCategory == null)
+            {
+                return NotFound();
+            }
+            return View(postCategory);
+        }
+
+        [HttpPost] //編輯貼文類別
+        public async Task<IActionResult> EditPostCategory(PostCategory postCategories)
+        {
+            if (ModelState.IsValid) // 驗證資料是否正確
+            {
+                _context.PostCategories.Update(postCategories); // 更新這筆分類資料
                 await _context.SaveChangesAsync(); // 寫入資料庫
                 return RedirectToAction("Categories"); //導回管理主頁
             }
