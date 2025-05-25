@@ -3,6 +3,7 @@ using DailyQuest_v01.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Eventing.Reader;
 using Task = DailyQuest_v01.Models.Task;
 
 namespace DailyQuest_v01.Controllers
@@ -13,36 +14,50 @@ namespace DailyQuest_v01.Controllers
         public TaskController(DailyQuestDbContext context) {
             _db = context;
         }
-        public IActionResult Index(){
-            ViewBag.tasktypename = new SelectList(_db.TaskTypes, "TaskTypeId", "TaskTypeName");
-            ViewBag.tasklabelname = new SelectList(_db.TaskLabels, "TaskLabelId", "TaskLabelName");
+        public IActionResult Index()
+        {
+            ModelState.Clear();
+            var model = new CreateTaskViewModel {ExpectDate= DateTime.Now};
+            ViewBag.tasktypename = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "系統", Value = "系統" },
+                new SelectListItem { Text = "活動", Value = "活動" },
+                new SelectListItem { Text = "私人", Value = "私人" }
+            };
+            ViewBag.tasklabelname = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "工作", Value = "工作" },
+                new SelectListItem { Text = "自我成長", Value = "自我成長" },
+                new SelectListItem { Text = "旅遊", Value = "旅遊" },
+                new SelectListItem { Text = "健身", Value = "健身" },
+                new SelectListItem { Text = "其他", Value = "其他" },
+            };
             ViewBag.setperiod = new List<string>() { "不定期", "每日", "每月" };
-            return View();
+            return View(model);
         }
+        
         [HttpPost]
-        public async Task<IActionResult> CreateTask(CreateTaskViewModel tasks) {
+        public async Task<IActionResult> CreateTask(CreateTaskViewModel tasks)
+        {
+            var tasktypeid = _db.TaskTypes.FirstOrDefault(t => t.TaskTypeName == tasks.TaskTypeName);
+            var tasklabelid = _db.TaskLabels.FirstOrDefault(t => t.TaskLabelName == tasks.TaskLabelName);
+            if (tasktypeid == null) return BadRequest("任務類型沒有符合資料");
+            if (tasklabelid == null) return BadRequest("任務標籤沒有符合資料");
             //利用關聯從B表去對應ViewModel傳入的值，此變數就會是B表
-            var taskTypeName = await _db.TaskTypes.FirstOrDefaultAsync(t => t.TaskTypeName == tasks.TaskTypeName);
-            var taskLabelName = await _db.TaskLabels.FirstOrDefaultAsync(t => t.TaskLabelName == tasks.TaskLabelName);
-            var taskResultName = await _db.TaskResults.FirstOrDefaultAsync(t => t.TaskResultName == "待完成");
-            if (taskTypeName == null) return Json("找不到任務類型");
-            if (taskLabelName == null) return Json("找不到任務標籤");
-            if (taskResultName == null) return Json("找不到任務結果");
             Task _tk = new Task()
             {
-                TaskTypeId = taskTypeName.TaskTypeId,
-                TaskLabelId = taskLabelName.TaskLabelId,
+                TaskTypeId = tasktypeid.TaskTypeId,
+                TaskLabelId = tasklabelid.TaskLabelId,
                 TaskContent = tasks.TaskContent,
-                SubTaskId = tasks.SubTaskId,
                 ExpectDate = tasks.ExpectDate,
                 SetPeriod = tasks.SetPeriod,
                 CreateDate = DateTime.Now,
                 Points = CalPoints(tasks.TaskTypeName),
-                ToolId = CalToolId(tasks.TaskTypeName),
-                TaskResultId = taskResultName.TaskResultId,
+                ToolId = 3,
+                TaskResultId = 1
             };
-            //await _db.Tasks.AddAsync(_tk);
-            //await _db.SaveChangesAsync();
+            await _db.Tasks.AddAsync(_tk);
+            await _db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
         //計算任務完成給予的點數
@@ -51,12 +66,27 @@ namespace DailyQuest_v01.Controllers
             else if (typeName == "活動") return 10;
             else return 2;
         }
-        //計算任務完成給予的道具
-        private static int CalToolId(string typeName){
-            if (typeName == "系統") return 5;
-            else if (typeName == "活動") return 10;
-            else return 2;
+        //tasktypename轉換成tasktypeid
+        private static int TransTypeTypeName(string typeName) {
+            if (typeName == "系統") return 1;
+            else if (typeName == "活動") return 2;
+            else return 3;
         }
+        private static int TransTypeLabelName(string labelName)
+        {
+            if (labelName == "工作") return 1;
+            else if (labelName == "自我成長") return 2;
+            else if (labelName == "旅遊") return 3;
+            else if (labelName == "健身") return 4;
+            else return 5;
+        }
+        private static int TransResultName(string resultName)
+        {
+            if (resultName == "待完成") return 1;
+            else if (resultName == "完成") return 2;
+            else return 3;
+        }
+
 
     }
 }

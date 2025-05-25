@@ -7,7 +7,7 @@
 
 <div class="row">
     <div class="col-4">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">新增任務</button>
+        <button type="button" class="btn btn-primary" id="createtask">新增任務</button>
     </div>
     <div class="col-4"></div>
     <div class="col-4">
@@ -22,7 +22,6 @@
                 <th>@Html.DisplayNameFor(model => model.TaskTypeName)</th>
                 <th>@Html.DisplayNameFor(model => model.TaskLabelName)</th>
                 <th>@Html.DisplayNameFor(model => model.TaskContent)</th>
-                <th>@Html.DisplayNameFor(model => model.SubTaskId)</th>
                 <th>@Html.DisplayNameFor(model => model.ExpectDate)</th>
                 <th>@Html.DisplayNameFor(model => model.SetPeriod)</th>
                 <th>@Html.DisplayNameFor(model => model.CreateDate)</th>
@@ -41,10 +40,11 @@
 </div>
 
 <!--用於新增任務的彈跳出介面-->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable modal-xl">
-        <div class="modal-content">
-            <form asp-action="CreateTask" method="post" enctype="application/x-www-form-urlencoded">
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" id="modalContent">
+            <form id="createform" asp-action="CreateTask" method="post" novalidate>
+                <div class="text-danger" asp-validation-summary="ModelOnly"></div>
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">新增任務</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -66,34 +66,31 @@
                         <label asp-for="TaskContent" class="col-sm-2 col-form-label"></label>
                         <div class="col-sm-10">
                             <input class="form-control" asp-for="TaskContent" />
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label asp-for="SubTaskId" class="col-sm-2 col-form-label"></label>
-                        <div class="col-sm-10">
-                            <input class="form-control" asp-for="SubTaskId" />
+                            <span asp-validation-for="TaskContent" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label asp-for="ExpectDate" class="col-sm-2 col-form-label"></label>
                         <div class="col-sm-10">
                             <input class="form-control" asp-for="ExpectDate" type="date">
+                            <span asp-validation-for="ExpectDate" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label asp-for="SetPeriod" class=" col-sm-2 col-form-label"></label>
                         <div class="col-sm-10">
-                            @foreach(var item in ViewBag.setperiod)
+                            @foreach (var item in ViewBag.setperiod)
                             {
                                 <input class="form-check-input" id="@item" name="setperiod" type="radio" value="@item">
                                 <label class="form-check-label" name="setperiod">@item</label>
                             }
                         </div>
+                        <span asp-validation-for="SetPeriod" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
-                    <button type="submit" class="btn btn-primary">儲存</button>
+                    <button type="submit" class="btn btn-primary" id="createsubmit">儲存</button>
                 </div>
             </form>
         </div>
@@ -101,8 +98,13 @@
 </div>
 
 @section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-
+        const btnsubmit = document.querySelector('#createtask');
+        btnsubmit.addEventListener('click', (event) => {
+            const myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            myModal.show();
+        });
     </script>
 }
 
