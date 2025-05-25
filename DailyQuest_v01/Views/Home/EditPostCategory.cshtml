@@ -1,0 +1,36 @@
+﻿@model DailyQuest_v01.Models.PostCategory
+@{
+    Layout = "~/Views/Shared/SocialLayout.cshtml";
+}
+
+<div class="page-breadcrumb">
+    <div class="row">
+        <div class="col-12 d-flex no-block align-items-center">
+            <h2 class="pb-2">編輯貼文類別</h2>
+            <div class="ms-auto text-end"></div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <form asp-action="EditPostCategory" method="post">
+        <div class="card-body">
+            <input type="hidden" asp-for="CategoryId" />
+
+            <div class="form-group row">
+                <label class="col-sm-3 text-end control-label col-form-label" asp-for="CategoryName"></label>
+                <div class="col-sm-8">
+                    <input asp-for="CategoryName" class="form-control" />
+                    <span asp-validation-for="CategoryName" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="border-top">
+            <div class="card-body">
+                <button type="submit" class="btn btn-primary">儲存</button>
+                <a asp-action="Categories" class="btn btn-secondary">取消</a>
+            </div>
+        </div>
+    </form>
+</div>
+
