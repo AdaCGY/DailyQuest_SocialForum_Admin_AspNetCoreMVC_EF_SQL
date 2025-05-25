@@ -30,10 +30,6 @@
         </thead>
         <tbody>
             <tr>
-                <td>
-                    <button><i class="fa-solid fa-magnifying-glass" style="margin:2px"></i></button>
-                    <button><i class="fa-solid fa-trash-can" style="margin:2px"></i></button>
-                </td>
             </tr>
         </tbody>
     </table>
@@ -105,6 +101,32 @@
             const myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
             myModal.show();
         });
+        const loadDate = async () => {
+            const response = await fetch(`@Url.Content("~/task/GetAllTasks")`);
+            const data = await response.json();
+            const htmlData = data.map(data => {
+                const {taskTypeName, taskLabelName, taskContent, expectDate, setPeriod, createDate, taskResultName} = data
+                return `
+                    <tr>
+                    <td>
+                        <button><i class="fa-solid fa-magnifying-glass" style="margin:2px"></i></button>
+                        <button><i class="fa-solid fa-trash-can" style="margin:2px"></i></button>
+                    </td>
+                    <td class="text-center">${taskTypeName}</td>
+                    <td class="text-center">${taskLabelName}</td>
+                    <td class="text-center">${taskContent}</td>
+                    <td class="text-center">${expectDate}</td>
+                    <td class="text-center">${setPeriod}</td>
+                    <td class="text-center">${createDate}</td>
+                    <td class="text-center">${taskResultName}</td>
+                    </tr>
+                `
+            });
+            document.querySelector('tbody').innerHTML = htmlData.join();
+        
+        };
+        loadDate();
+
     </script>
 }
 

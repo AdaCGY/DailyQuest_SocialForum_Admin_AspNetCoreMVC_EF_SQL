@@ -3,6 +3,7 @@ using DailyQuest_v01.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 using System.Diagnostics.Eventing.Reader;
 using Task = DailyQuest_v01.Models.Task;
 
@@ -17,7 +18,6 @@ namespace DailyQuest_v01.Controllers
         public IActionResult Index()
         {
             ModelState.Clear();
-            var model = new CreateTaskViewModel {ExpectDate= DateTime.Now};
             ViewBag.tasktypename = new List<SelectListItem>
             {
                 new SelectListItem { Text = "系統", Value = "系統" },
@@ -33,9 +33,8 @@ namespace DailyQuest_v01.Controllers
                 new SelectListItem { Text = "其他", Value = "其他" },
             };
             ViewBag.setperiod = new List<string>() { "不定期", "每日", "每月" };
-            return View(model);
+            return View();
         }
-        
         [HttpPost]
         public async Task<IActionResult> CreateTask(CreateTaskViewModel tasks)
         {
@@ -48,11 +47,11 @@ namespace DailyQuest_v01.Controllers
             {
                 TaskTypeId = tasktypeid.TaskTypeId,
                 TaskLabelId = tasklabelid.TaskLabelId,
-                TaskContent = tasks.TaskContent,
-                ExpectDate = tasks.ExpectDate,
+                TaskContent = tasks.TaskContent ?? string.Empty,
+                ExpectDate = Convert.ToDateTime(tasks.ExpectDate),
                 SetPeriod = tasks.SetPeriod,
                 CreateDate = DateTime.Now,
-                Points = CalPoints(tasks.TaskTypeName),
+                Points = CalPoints(tasks.TaskTypeName ?? string.Empty),
                 ToolId = 3,
                 TaskResultId = 1
             };
@@ -66,26 +65,26 @@ namespace DailyQuest_v01.Controllers
             else if (typeName == "活動") return 10;
             else return 2;
         }
-        //tasktypename轉換成tasktypeid
-        private static int TransTypeTypeName(string typeName) {
-            if (typeName == "系統") return 1;
-            else if (typeName == "活動") return 2;
-            else return 3;
+        //查詢目前Task資料表裡的資料
+        public async Task<IActionResult> GetAllTasks(int taskid) {
+            var eachtask = await _db.Tasks
+                .Include(t => t.TaskType)
+                .Include(t => t.TaskLabel)
+                .Include(t => t.TaskResult)
+                .ToListAsync();
+            var model = eachtask.Select(task => new CreateTaskViewModel
+            {
+                TaskTypeName = task.TaskType.TaskTypeName,
+                TaskLabelName = task.TaskLabel.TaskLabelName,
+                TaskContent = task.TaskContent,
+                ExpectDate = task.ExpectDate.Date.ToString("yyyy-MM-dd"),
+                SetPeriod = task.SetPeriod,
+                CreateDate = task.CreateDate,
+                TaskResultName = task.TaskResult.TaskResultName
+            }).ToList();
+            return Json(model);
         }
-        private static int TransTypeLabelName(string labelName)
-        {
-            if (labelName == "工作") return 1;
-            else if (labelName == "自我成長") return 2;
-            else if (labelName == "旅遊") return 3;
-            else if (labelName == "健身") return 4;
-            else return 5;
-        }
-        private static int TransResultName(string resultName)
-        {
-            if (resultName == "待完成") return 1;
-            else if (resultName == "完成") return 2;
-            else return 3;
-        }
+        
 
 
     }
