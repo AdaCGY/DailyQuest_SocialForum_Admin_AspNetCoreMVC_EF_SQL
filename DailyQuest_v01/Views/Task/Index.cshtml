@@ -4,7 +4,6 @@
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <h1>任務清單</h1>
-
 <div class="row">
     <div class="col-4">
         <button type="button" class="btn btn-primary" id="createtask">新增任務</button>
@@ -28,21 +27,17 @@
                 <th>@Html.DisplayNameFor(model => model.TaskResultName)</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-            </tr>
-        </tbody>
+        <tbody></tbody>
     </table>
 </div>
-
 <!--用於新增任務的彈跳出介面-->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="createTaskModel" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content" id="modalContent">
+        <div class="modal-content">
             <form id="createform" asp-action="CreateTask" method="post" novalidate>
                 <div class="text-danger" asp-validation-summary="ModelOnly"></div>
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">新增任務</h5>
+                    <h5 class="modal-title" id="createTaskLabel">新增任務</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -92,25 +87,63 @@
         </div>
     </div>
 </div>
+<!--用於修改任務的彈跳出介面-->
+<div class="modal fade" id="replaceTaskModel" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replaceTaskLabel">修改任務</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                <button type="submit" class="btn btn-primary" id="replacesubmit">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--用於刪除任務的彈跳出介面-->
+<div class="modal fade" id="deleteTaskModel" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteTaskLabel">提示：刪除任務</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>此筆任務是否要刪除呢？</h6>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="submit" class="btn btn-primary" id="deletesubmit">確認</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts{
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
+        //新增任務button_彈出介面
         const btnsubmit = document.querySelector('#createtask');
         btnsubmit.addEventListener('click', (event) => {
-            const myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            const myModal = new bootstrap.Modal(document.getElementById('createTaskModel'));
             myModal.show();
         });
+        //用於呈現於頁面上的task資料表
         const loadDate = async () => {
             const response = await fetch(`@Url.Content("~/task/GetAllTasks")`);
             const data = await response.json();
-            const htmlData = data.map(data => {
-                const {taskTypeName, taskLabelName, taskContent, expectDate, setPeriod, createDate, taskResultName} = data
+            const htmlData = data.map((data) => {
+                const {taskId, taskTypeName, taskLabelName, taskContent, expectDate, setPeriod, createDate, taskResultName} = data
                 return `
                     <tr>
                     <td>
-                        <button><i class="fa-solid fa-magnifying-glass" style="margin:2px"></i></button>
-                        <button><i class="fa-solid fa-trash-can" style="margin:2px"></i></button>
+                        <button id="replacetask${taskId}" onclick="replacebtn()"><i class="fa-solid fa-magnifying-glass" style="margin:2px"></i></button>
+                        <button id="deletetask${taskId}" onclick="deletebtn(${taskId})"><i class="fa-solid fa-trash-can" style="margin:2px"></i></button>
                     </td>
                     <td class="text-center">${taskTypeName}</td>
                     <td class="text-center">${taskLabelName}</td>
@@ -123,10 +156,29 @@
                 `
             });
             document.querySelector('tbody').innerHTML = htmlData.join();
-        
         };
         loadDate();
-
+        //放大鏡(修改)button_彈出介面//todo
+        const replacebtn = (() => {
+            const myModal = new bootstrap.Modal(document.getElementById('replaceTaskModel'));
+            myModal.show();
+        });
+        let currentdeleteid = null;
+        //垃圾桶(刪除)button_是否刪除的彈跳介面
+        const deletebtn = ((singletaskid) => {
+            currentdeleteid = singletaskid;
+            const myModal = new bootstrap.Modal(document.getElementById('deleteTaskModel'));
+            myModal.show();
+        });
+        //垃圾桶(刪除)button_刪除任務
+        document.getElementById('deletesubmit').addEventListener('click', async ()=>{
+            if (!currentdeleteid) return console.log("沒有該任務編號");
+            await fetch(`@Url.Content("~/task/DeleteSingleTask")?singletaskid=${currentdeleteid}`);
+            //彈跳介面已經經由fetch(非同步請求)，故只能用js進行手動關閉modal
+            const deletemodal = bootstrap.Modal.getInstance(document.getElementById('deleteTaskModel'));
+            if (deletemodal) bootstrap.Modal.getInstance(document.getElementById('deleteTaskModel')).hide();
+            loadDate();
+        });
     </script>
 }
 

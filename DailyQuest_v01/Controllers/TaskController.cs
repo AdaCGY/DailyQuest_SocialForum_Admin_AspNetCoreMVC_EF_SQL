@@ -36,10 +36,10 @@ namespace DailyQuest_v01.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> CreateTask(CreateTaskViewModel tasks)
+        public async Task<IActionResult> CreateTask(CreateTaskViewModel singletask)
         {
-            var tasktypeid = _db.TaskTypes.FirstOrDefault(t => t.TaskTypeName == tasks.TaskTypeName);
-            var tasklabelid = _db.TaskLabels.FirstOrDefault(t => t.TaskLabelName == tasks.TaskLabelName);
+            var tasktypeid = _db.TaskTypes.FirstOrDefault(t => t.TaskTypeName == singletask.TaskTypeName);
+            var tasklabelid = _db.TaskLabels.FirstOrDefault(t => t.TaskLabelName == singletask.TaskLabelName);
             if (tasktypeid == null) return BadRequest("任務類型沒有符合資料");
             if (tasklabelid == null) return BadRequest("任務標籤沒有符合資料");
             //利用關聯從B表去對應ViewModel傳入的值，此變數就會是B表
@@ -47,11 +47,11 @@ namespace DailyQuest_v01.Controllers
             {
                 TaskTypeId = tasktypeid.TaskTypeId,
                 TaskLabelId = tasklabelid.TaskLabelId,
-                TaskContent = tasks.TaskContent ?? string.Empty,
-                ExpectDate = Convert.ToDateTime(tasks.ExpectDate),
-                SetPeriod = tasks.SetPeriod,
+                TaskContent = singletask.TaskContent ?? string.Empty,
+                ExpectDate = Convert.ToDateTime(singletask.ExpectDate),
+                SetPeriod = singletask.SetPeriod,
                 CreateDate = DateTime.Now,
-                Points = CalPoints(tasks.TaskTypeName ?? string.Empty),
+                Points = CalPoints(singletask.TaskTypeName ?? string.Empty),
                 ToolId = 3,
                 TaskResultId = 1
             };
@@ -74,6 +74,7 @@ namespace DailyQuest_v01.Controllers
                 .ToListAsync();
             var model = eachtask.Select(task => new CreateTaskViewModel
             {
+                TaskId = task.TaskId,
                 TaskTypeName = task.TaskType.TaskTypeName,
                 TaskLabelName = task.TaskLabel.TaskLabelName,
                 TaskContent = task.TaskContent,
@@ -83,6 +84,11 @@ namespace DailyQuest_v01.Controllers
                 TaskResultName = task.TaskResult.TaskResultName
             }).ToList();
             return Json(model);
+        }
+        //刪除單筆Task資料表裡的資料
+        public async Task<IActionResult> DeleteSingleTask(int singletaskid) {
+            await _db.Tasks.Where(t => t.TaskId == singletaskid).ExecuteDeleteAsync();
+            return Ok(new {message = "該筆資料已刪除" });
         }
         
 

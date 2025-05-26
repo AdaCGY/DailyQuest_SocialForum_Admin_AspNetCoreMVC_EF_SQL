@@ -5,6 +5,8 @@ namespace DailyQuest_v01.Models.ViewModel
 {
     public class CreateTaskViewModel
     {
+        [Required]
+        public int TaskId { get; set; }
         [Display(Name = "任務類型")]
         public string? TaskTypeName { get; set; } = null!;
         [Display(Name = "任務標籤")]
