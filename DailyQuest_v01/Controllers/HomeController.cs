@@ -22,6 +22,11 @@ namespace DailyQuest_v01.Controllers
             return View();
         }
 
+        public IActionResult SocialIndex()
+        {
+            return View();
+        }
+
         [HttpGet]
         public async Task<IActionResult> Categories()
         {
@@ -44,13 +49,13 @@ namespace DailyQuest_v01.Controllers
             return View(viewmodel);
         }
 
-        [HttpGet]
+        [HttpGet] //新增貼文類別
         public IActionResult CreatePostCategory()
         {
             return View();
         }
 
-        [HttpPost] //新增貼文類別
+        [HttpPost] 
         public async Task<IActionResult> CreatePostCategory(PostCategory postCategories)
         {
             if (ModelState.IsValid) // 驗證資料是否正確
@@ -73,7 +78,7 @@ namespace DailyQuest_v01.Controllers
             return View(postCategory);
         }
 
-        [HttpPost] //編輯貼文類別
+        [HttpPost] 
         public async Task<IActionResult> EditPostCategory(PostCategory postCategories)
         {
             if (ModelState.IsValid) // 驗證資料是否正確
@@ -91,13 +96,37 @@ namespace DailyQuest_v01.Controllers
             return View();
         }
 
-        [HttpPost] //新增檢舉類別
+        [HttpPost] 
         public async Task<IActionResult> CreateReportCategory(ReportCategory reportCategory)
         {
             reportCategory.CreatedAt = DateTime.Now;
             if (ModelState.IsValid) // 驗證資料是否正確
             {
                 _context.ReportCategories.Add(reportCategory); // 新增這筆分類資料
+                await _context.SaveChangesAsync(); // 寫入資料庫
+                return RedirectToAction("Categories"); //導回管理主頁
+            }
+            return NoContent();
+        }
+
+        [HttpGet] //編輯檢舉類別
+        public async Task<IActionResult> EditReportCategory(int id)
+        {
+            var reportCategory = await _context.ReportCategories.FindAsync(id);
+            if (reportCategory == null)
+            {
+                return NotFound();
+            }
+            return View(reportCategory);
+        }
+
+        [HttpPost] 
+        public async Task<IActionResult> EditReportCategory(ReportCategory reportCategory)
+        {
+            reportCategory.CreatedAt = DateTime.Now;
+            if (ModelState.IsValid) // 驗證資料是否正確
+            {
+                _context.ReportCategories.Update(reportCategory); // 更新這筆分類資料
                 await _context.SaveChangesAsync(); // 寫入資料庫
                 return RedirectToAction("Categories"); //導回管理主頁
             }
