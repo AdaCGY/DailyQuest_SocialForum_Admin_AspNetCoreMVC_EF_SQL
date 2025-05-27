@@ -41,7 +41,7 @@
                             <td>@item.CategoryId</td>
                             <td>@item.CategoryName</td>
                             <td>
-                                <a asp-controller="Home" asp-action="EditPostCategory" asp-route-id="@item.CategoryId" class="btn btn-outline-info">編輯</a>
+                                <a href="#" class="btn btn-outline-info load-edit-post-category" id="@item.CategoryId">編輯</a>
                                 <button class="btn-delete-post btn btn-outline-danger" data-id="@item.CategoryId">刪除</button>
                             </td>
                         </tr>
@@ -88,7 +88,7 @@
 </div>
 
 
-@section Scripts {
+
 <script>
     $(document).on('click', '.btn-delete-post', function () {
     const id = $(this).data('id');
@@ -104,10 +104,7 @@
                     alert(data.message || "刪除失敗");
                 }
             },
-            error: function (err) {
-                console.error("錯誤：", err);
-                alert("發生錯誤！");
-            }
+            
         });
     });
 
@@ -125,18 +122,10 @@
                         alert(data.message || "刪除失敗");
                     }
                 },
-                error: function (err) {
-                    console.error("錯誤：", err);
-                    alert("發生錯誤！");
-                }
+                
             });
         });
 
-             
-</script>
-
-}
-<script>
            $(document).on('click', '.load-create-post-category', function (e) {
            e.preventDefault();
 
@@ -148,4 +137,19 @@
                 $('#content-area').html(result).fadeIn();
              });
           });
+
+          $(document).on('click', '.load-edit-post-category', function (e) {
+           e.preventDefault();
+           const id = $(this).attr('id');
+
+           $.get('@Url.Action("EditPostCategory", "Home")'+'/'+id, function (result) {
+                // 隱藏原本的整頁內容
+                $('#page-body-container').hide();
+
+                // 僅做右側內容更新
+                $('#content-area').html(result).fadeIn();
+             });
+          });
+             
 </script>
+

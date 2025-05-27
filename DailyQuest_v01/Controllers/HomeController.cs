@@ -65,7 +65,7 @@ namespace DailyQuest_v01.Controllers
                 return Json(new { success = true, message = "新增成功" });
             }
 
-            return Json(new { success = false, message = "驗證失敗" });
+            return Json(new { success = false, message = "新增失敗" });
         }
 
         [HttpGet] //編輯貼文類別
@@ -74,9 +74,9 @@ namespace DailyQuest_v01.Controllers
             var postCategory = await _context.PostCategories.FindAsync(id);
             if (postCategory == null)
             {
-                return NotFound();
+                return NotFound(new { success = false, message = "找不到資料" });
             }
-            return View(postCategory);
+            return PartialView("~/Views/Home/Partials/_EditPostCategoryPartial.cshtml", postCategory);
         }
 
         [HttpPost] 
@@ -84,11 +84,15 @@ namespace DailyQuest_v01.Controllers
         {
             if (ModelState.IsValid) // 驗證資料是否正確
             {
+                if(_context.PostCategories.Any(c=>c.CategoryName == postCategories.CategoryName)) // 檢查是否有重複的類別名稱
+                {
+                    return Json(new { success = false, message = "類別名稱已存在，請重新命名" });
+                }
                 _context.PostCategories.Update(postCategories); // 更新這筆分類資料
                 await _context.SaveChangesAsync(); // 寫入資料庫
-                return RedirectToAction("Categories"); //導回管理主頁
+                return Json(new { success = true, message = "編輯成功" });
             }
-            return NoContent();
+            return Json(new { success = false, message = "編輯失敗" });
         }
 
         [HttpGet] //新增檢舉類別

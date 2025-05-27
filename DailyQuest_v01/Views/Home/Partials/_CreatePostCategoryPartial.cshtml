@@ -46,9 +46,6 @@
                         alert(res.message);
                     }
                 },
-                error: function () {
-                    alert("發生錯誤！");
-                }
             });
         });
 
@@ -61,14 +58,6 @@
                 $('#content-area').html(result).fadeIn();
             });
         });
-
-        //重新載入分類列表
-        function loadCategoriesPartial() {
-            $.get('@Url.Action("Categories", "Home")', function (html) {
-                $('#page-body-container').hide();
-                $('#content-area').html(html).fadeIn();
-            });
-        }
 
     });
 </script>

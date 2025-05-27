@@ -176,7 +176,7 @@
                                     <a class="sidebar-link"
                                        asp-controller="Post" asp-action="Index">
                                         <i class="fas fa-list-ul"></i>
-                                        <span class="hide-menu">貼文總覽</span>
+                                        <span class="hide-menu">檢視貼文及留言</span>
                                     </a>
                                 </li>
                             </ul>
@@ -260,18 +260,18 @@
     <div class="flotTip" style="position: absolute; left: 306px; top: 566px; display: none;"></div>
 
     <script>
+        //載入分類列表
+        function loadCategoriesPartial() {
+            $.get('@Url.Action("Categories", "Home")', function (html) {
+                $('#page-body-container').hide();
+                $('#content-area').html(html).fadeIn();
+            });
+        }
+
                 $(document).on('click', '.load-categories', function (e) {
             e.preventDefault();
-
-            $.get('@Url.Action("Categories", "Home")', function (result) {
-                // 隱藏原本的整頁內容
-                $('#page-body-container').hide();
-
-                // 僅做右側內容更新
-                $('#content-area').html(result).fadeIn();
-            });
-        });
-
+            loadCategoriesPartial();
+                });
     </script>
 </body>
 </html>
