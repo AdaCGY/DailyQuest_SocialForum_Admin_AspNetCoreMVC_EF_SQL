@@ -52,19 +52,20 @@ namespace DailyQuest_v01.Controllers
         [HttpGet] //新增貼文類別
         public IActionResult CreatePostCategory()
         {
-            return View();
+            return PartialView("~/Views/Home/Partials/_CreatePostCategoryPartial.cshtml");
         }
 
-        [HttpPost] 
-        public async Task<IActionResult> CreatePostCategory(PostCategory postCategories)
+        [HttpPost]
+        public async Task<IActionResult> CreatePostCategory(PostCategory postCategory)
         {
-            if (ModelState.IsValid) // 驗證資料是否正確
+            if (ModelState.IsValid)
             {
-                _context.PostCategories.Add(postCategories);// 新增這筆分類資料
-                await _context.SaveChangesAsync(); // 寫入資料庫
-                return RedirectToAction("Categories"); //導回管理主頁
+                _context.PostCategories.Add(postCategory);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "新增成功" });
             }
-            return NoContent();
+
+            return Json(new { success = false, message = "驗證失敗" });
         }
 
         [HttpGet] //編輯貼文類別

@@ -48,7 +48,7 @@
                     }
                 </tbody>
             </table>
-            <a type="button" class="btn btn-outline-success" asp-controller="Home" asp-action="CreatePostCategory">新增類別</a>
+            <a href="#" class="btn btn-outline-success load-create-post-category">新增類別</a>
         </div>
     </div>
 </div>
@@ -131,8 +131,21 @@
                 }
             });
         });
+
              
 </script>
 
 }
+<script>
+           $(document).on('click', '.load-create-post-category', function (e) {
+           e.preventDefault();
 
+           $.get('@Url.Action("CreatePostCategory", "Home")', function (result) {
+                // 隱藏原本的整頁內容
+                $('#page-body-container').hide();
+
+                // 僅做右側內容更新
+                $('#content-area').html(result).fadeIn();
+             });
+          });
+</script>
