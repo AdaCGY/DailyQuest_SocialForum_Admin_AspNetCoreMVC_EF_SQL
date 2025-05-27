@@ -160,8 +160,7 @@
                             <!-- 子選單（點擊後才導向） -->
                             <ul class="collapse first-level" aria-expanded="false">
                                 <li class="sidebar-item">
-                                    <a class="sidebar-link"
-                                       asp-controller="Home" asp-action="Categories">
+                                    <a href="#" class="sidebar-link load-categories">
                                         <i class="far fa-edit"></i>
                                         <span class="hide-menu">類別管理</span>
                                     </a>
@@ -195,7 +194,19 @@
     <!-- ============================================================== -->
       <!-- Page wrapper  -->
       <!-- ============================================================== -->
-        <div class="page-wrapper">@RenderBody()</div>
+        <div class="page-wrapper">
+
+            <!-- mvc -->
+            <div id="page-body-container">
+                @RenderBody()
+            </div>
+
+            <!-- AJAX （預設隱藏）-->
+            <div id="content-area" style="display: none;">
+                
+            </div>
+
+        </div>
         <!-- ============================================================== -->
         <!-- End Bread crumb and right sidebar toggle -->
         <!-- ============================================================== -->
@@ -247,6 +258,20 @@
     <script src="~/dist/js/pages/chart/chart-page-init.js"></script>
     @RenderSection("Scripts", required: false)
     <div class="flotTip" style="position: absolute; left: 306px; top: 566px; display: none;"></div>
+
+    <script>
+                $(document).on('click', '.load-categories', function (e) {
+            e.preventDefault();
+
+            $.get('@Url.Action("Categories", "Home")', function (result) {
+                // 隱藏原本的整頁內容
+                $('#page-body-container').hide();
+
+                // 僅做右側內容更新
+                $('#content-area').html(result).fadeIn();
+            });
+        });
+    </script>
 </body>
 </html>
 

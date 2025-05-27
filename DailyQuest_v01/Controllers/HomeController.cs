@@ -46,7 +46,7 @@ namespace DailyQuest_v01.Controllers
                     CreatedAt = r.CreatedAt
                 }).ToListAsync(),
             };
-            return View(viewmodel);
+            return PartialView("~/Views/Home/Partials/_CategoriesPartial.cshtml", viewmodel);
         }
 
         [HttpGet] //新增貼文類別
