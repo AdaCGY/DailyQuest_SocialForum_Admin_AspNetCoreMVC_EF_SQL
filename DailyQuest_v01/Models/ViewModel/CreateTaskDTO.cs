@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DailyQuest_v01.Models.ViewModel
 {
-    public class CreateTaskViewModel
+    public class CreateTaskDTO
     {
         [Required]
         public int TaskId { get; set; }
@@ -17,11 +17,13 @@ namespace DailyQuest_v01.Models.ViewModel
         public string? TaskContent { get; set; } = null!;
         [Required(ErrorMessage = "設定完成日必填")]
         [Display(Name = "設定完成日")]
-        public string? ExpectDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd", ApplyFormatInEditMode = true)]
+        public DateTime ExpectDate { get; set; }
         [Required(ErrorMessage = "週期設定必填")]
         [Display(Name = "週期設定")]
         public string? SetPeriod { get; set; }
         [Display(Name = "發布時間")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd", ApplyFormatInEditMode = true)]
         public DateTime CreateDate { get; set; }
         [Display(Name = "任務結果")]
         public string? TaskResultName { get; set; } = null!;

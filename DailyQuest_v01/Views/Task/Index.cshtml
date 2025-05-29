@@ -1,4 +1,4 @@
-﻿@model DailyQuest_v01.Models.ViewModel.CreateTaskViewModel
+﻿@model DailyQuest_v01.Models.ViewModel.CreateTaskDTO
 @{
     ViewData["Title"] = "Index";
 }
@@ -91,17 +91,19 @@
 <div class="modal fade" id="replaceTaskModel" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="replaceTaskLabel">修改任務</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
-                <button type="submit" class="btn btn-primary" id="replacesubmit">儲存</button>
-            </div>
+            <form id="replacetaskform" asp-action="ReplaceTask" method="post" novalidate>
+                <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="replaceTaskLabel">修改任務</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <button type="submit" class="btn btn-primary" id="replacesubmit">儲存</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -133,35 +135,108 @@
             const myModal = new bootstrap.Modal(document.getElementById('createTaskModel'));
             myModal.show();
         });
+        //把ISO格式(yyyy-MM-ddT~)轉為yyyy-MM-dd
+        const formatDate = (dateStr) => {
+            const data = new Date(dateStr);
+            return data.toISOString().split('T')[0];
+        };
         //用於呈現於頁面上的task資料表
         const loadDate = async () => {
             const response = await fetch(`@Url.Content("~/task/GetAllTasks")`);
-            const data = await response.json();
-            const htmlData = data.map((data) => {
+            const datas = await response.json();
+            const htmlData = datas.map((data) => {
                 const {taskId, taskTypeName, taskLabelName, taskContent, expectDate, setPeriod, createDate, taskResultName} = data
                 return `
                     <tr>
                     <td>
-                        <button id="replacetask${taskId}" onclick="replacebtn()"><i class="fa-solid fa-magnifying-glass" style="margin:2px"></i></button>
+                        <button id="replacetask${taskId}" onclick="replacebtn(${taskId})" value="${taskId}"><i class="fa-solid fa-magnifying-glass" style="margin:2px"></i></button>
                         <button id="deletetask${taskId}" onclick="deletebtn(${taskId})"><i class="fa-solid fa-trash-can" style="margin:2px"></i></button>
                     </td>
                     <td class="text-center">${taskTypeName}</td>
                     <td class="text-center">${taskLabelName}</td>
                     <td class="text-center">${taskContent}</td>
-                    <td class="text-center">${expectDate}</td>
+                    <td class="text-center">${formatDate(expectDate)}</td>
                     <td class="text-center">${setPeriod}</td>
-                    <td class="text-center">${createDate}</td>
+                    <td class="text-center">${formatDate(createDate)}</td>
                     <td class="text-center">${taskResultName}</td>
                     </tr>
                 `
             });
-            document.querySelector('tbody').innerHTML = htmlData.join();
+            document.querySelector('tbody').innerHTML = htmlData.join('');
         };
         loadDate();
-        //放大鏡(修改)button_彈出介面//todo
-        const replacebtn = (() => {
+        //放大鏡(修改)button_彈出介面
+        const replacebtn = (async (taskid) => {
             const myModal = new bootstrap.Modal(document.getElementById('replaceTaskModel'));
+            //抓取目前選取的資料內容
+            const response = await fetch(`@Url.Content("~/task/GetSingleTask")?singletaskid=${taskid}`);
+            const datas = await response.json();
+            console.log(datas);
+            //從後台抓取任務類型、任務標籤、週期設定
+            const tyresponse = await fetch(`@Url.Content("~/task/GetTypeName")`)
+            const gettypename = await tyresponse.json();
+            const tynaoptions = gettypename.map(opt => {
+                const selected = opt.taskTypeName == datas.taskTypeName ? 'selected' : '';
+                return `<option value="${opt.taskTypeName}" ${selected}>${opt.taskTypeName}</option>`;
+            }).join('');
+            const lbresponse = await fetch(`@Url.Content("~/task/GetLabelName")`)
+            const getlabelname = await lbresponse.json();
+            const lbnaoptions = getlabelname.map(opt => {
+                const selected = opt.taskLabelName == datas.taskLabelName ? 'selected' : '';
+                return `<option value="${opt.taskLabelName}" ${selected}>${opt.taskLabelName}</option>`;
+            }).join('');
+            const setperiodresponse = await fetch(`@Url.Content("~/task/GetSetPeriodContent")`)
+            const getsetperiod = await setperiodresponse.json();
+            const setperiodoptions = getsetperiod.map(opt => {
+                const checked = opt == datas.setPeriod ? 'checked' : '';
+                return `<input class="form-check-input" id="${datas.taskId}" name="setperiod" type="radio" value="${opt}" ${checked}>
+                <label class="form-check-label" name="setperiod">${opt}</label>`;
+            }).join('');
+            const htmlData = (() => {
+                return `
+                <input type="hidden" name="TaskId" value="${datas.taskId}">
+                <div class="mb-3 row">
+                    <label for="TaskTypeName" class="col-sm-2 col-form-label">任務類型</label>
+                    <div class="col-sm-10">
+                        <select id="TaskTypeName" class="form-select" name="TaskTypeName">
+                            ${tynaoptions}
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="TaskLabelName" class="col-sm-2 col-form-label">任務標籤</label>
+                    <div class="col-sm-10">
+                        <select id="TaskLabelName" class="form-select" name="TaskLabelName">
+                            ${lbnaoptions}
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="TaskContent" class="col-sm-2 col-form-label">任務內容</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" name="TaskContent" value="${datas.taskContent}"/>
+                        <span asp-validation-for="TaskContent" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label name="ExpectDate" class="col-sm-2 col-form-label">設定完成日</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" name="ExpectDate" type="date" value="${formatDate(datas.expectDate)}">
+                        <span asp-validation-for="ExpectDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label asp-for="SetPeriod" class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
+                        ${setperiodoptions}
+                    </div>
+                    <span asp-validation-for="SetPeriod" class="text-danger"></span>
+                </div>
+                `
+            });
+            document.querySelector('#replacetaskform .modal-body').innerHTML = htmlData();
             myModal.show();
+            return datas;
         });
         let currentdeleteid = null;
         //垃圾桶(刪除)button_是否刪除的彈跳介面
