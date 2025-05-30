@@ -8,14 +8,13 @@ using NuGet.Protocol;
 using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.Threading.Tasks;
-using Task = DailyQuest_v01.Models.Task;
 
 namespace DailyQuest_v01.Controllers
 {
-    public class TaskController : Controller
+    public class MissionController : Controller
     {
         private readonly DailyQuestDbContext _db;
-        public TaskController(DailyQuestDbContext context) {
+        public MissionController(DailyQuestDbContext context) {
             _db = context;
         }
         public IActionResult Index()
@@ -46,7 +45,7 @@ namespace DailyQuest_v01.Controllers
             if (tasktype == null) return BadRequest("任務類型沒有符合資料");
             if (tasklabel == null) return BadRequest("任務標籤沒有符合資料");
             //利用關聯從B表去對應ViewModel傳入的值，此變數就會是B表
-            Task _tk = new Task()
+            Mission _tk = new Mission()
             {
                 TaskTypeId = tasktype.TaskTypeId,
                 TaskLabelId = tasklabel.TaskLabelId,
@@ -58,14 +57,14 @@ namespace DailyQuest_v01.Controllers
                 ToolId = 3,
                 TaskResultId = 1
             };
-            await _db.Tasks.AddAsync(_tk);
+            await _db.Missions.AddAsync(_tk);
             await _db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
         //修改已存在的資料並回存至資料庫
         [HttpPost]
         public async Task<IActionResult> ReplaceTask(CreateTaskDTO singletask) {
-            var target = await _db.Tasks.FirstOrDefaultAsync(t => t.TaskId == singletask.TaskId);
+            var target = await _db.Missions.FirstOrDefaultAsync(t => t.TaskId == singletask.TaskId);
             var tasktype = await _db.TaskTypes.FirstOrDefaultAsync(t => t.TaskTypeName == singletask.TaskTypeName);
             var tasklabel = await _db.TaskLabels.FirstOrDefaultAsync(t => t.TaskLabelName == singletask.TaskLabelName);
             if (target == null) return BadRequest("資料庫找不到相符的資料");
@@ -87,7 +86,7 @@ namespace DailyQuest_v01.Controllers
         }
         //查詢目前Task資料表裡的資料
         public async Task<IActionResult> GetAllTasks() {
-            var eachtask = await _db.Tasks
+            var eachtask = await _db.Missions
                 .Include(t => t.TaskType)
                 .Include(t => t.TaskLabel)
                 .Include(t => t.TaskResult)
@@ -107,7 +106,7 @@ namespace DailyQuest_v01.Controllers
         }
         //回傳單筆資料
         public async Task<IActionResult> GetSingleTask(int singletaskid) {
-            var singletask = await _db.Tasks
+            var singletask = await _db.Missions
                 .Include (t => t.TaskType)
                 .Include(t => t.TaskLabel)
                 .Include(t => t.TaskResult)
@@ -130,7 +129,7 @@ namespace DailyQuest_v01.Controllers
         }
         //刪除單筆Task資料表裡的資料
         public async Task<IActionResult> DeleteSingleTask(int singletaskid) {
-            await _db.Tasks.Where(t => t.TaskId == singletaskid).ExecuteDeleteAsync();
+            await _db.Missions.Where(t => t.TaskId == singletaskid).ExecuteDeleteAsync();
             return Ok(new {message = "該筆資料已刪除" });
         }
         public async Task<IActionResult> GetTypeName() {

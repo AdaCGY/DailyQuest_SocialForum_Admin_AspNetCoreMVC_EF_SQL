@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DailyQuest_v01.Models;
 
-public partial class Task
+public partial class Mission
 {
+    [Key]
     public int TaskId { get; set; }
 
     public int TaskTypeId { get; set; }

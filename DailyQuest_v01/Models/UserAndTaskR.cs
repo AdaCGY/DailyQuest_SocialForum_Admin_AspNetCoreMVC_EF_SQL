@@ -13,7 +13,7 @@ public partial class UserAndTaskR
 
     public int TaskResultId { get; set; }
 
-    public virtual Task Task { get; set; } = null!;
+    public virtual Mission Mission { get; set; } = null!;
 
     public virtual TaskResult TaskResult { get; set; } = null!;
 

@@ -21,7 +21,7 @@ public partial class Tool
 
     public DateTime? LastModified { get; set; }
 
-    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+    public virtual ICollection<Mission> Missions { get; set; } = new List<Mission>();
 
     public virtual ICollection<Title> Titles { get; set; } = new List<Title>();
 }

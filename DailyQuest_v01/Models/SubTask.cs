@@ -19,7 +19,7 @@ public partial class SubTask
 
     public int Points { get; set; }
 
-    public virtual Task Task { get; set; } = null!;
+    public virtual Mission Mission { get; set; } = null!;
 
-    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+    public virtual ICollection<Mission> Missions { get; set; } = new List<Mission>();
 }

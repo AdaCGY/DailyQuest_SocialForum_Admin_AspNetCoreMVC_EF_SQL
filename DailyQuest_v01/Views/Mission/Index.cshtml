@@ -142,7 +142,7 @@
         };
         //用於呈現於頁面上的task資料表
         const loadDate = async () => {
-            const response = await fetch(`@Url.Content("~/task/GetAllTasks")`);
+            const response = await fetch(`@Url.Content("~/Mission/GetAllTasks")`);
             const datas = await response.json();
             const htmlData = datas.map((data) => {
                 const {taskId, taskTypeName, taskLabelName, taskContent, expectDate, setPeriod, createDate, taskResultName} = data
@@ -169,23 +169,23 @@
         const replacebtn = (async (taskid) => {
             const myModal = new bootstrap.Modal(document.getElementById('replaceTaskModel'));
             //抓取目前選取的資料內容
-            const response = await fetch(`@Url.Content("~/task/GetSingleTask")?singletaskid=${taskid}`);
+            const response = await fetch(`@Url.Content("~/Mission/GetSingleTask")?singletaskid=${taskid}`);
             const datas = await response.json();
             console.log(datas);
             //從後台抓取任務類型、任務標籤、週期設定
-            const tyresponse = await fetch(`@Url.Content("~/task/GetTypeName")`)
+            const tyresponse = await fetch(`@Url.Content("~/Mission/GetTypeName")`)
             const gettypename = await tyresponse.json();
             const tynaoptions = gettypename.map(opt => {
                 const selected = opt.taskTypeName == datas.taskTypeName ? 'selected' : '';
                 return `<option value="${opt.taskTypeName}" ${selected}>${opt.taskTypeName}</option>`;
             }).join('');
-            const lbresponse = await fetch(`@Url.Content("~/task/GetLabelName")`)
+            const lbresponse = await fetch(`@Url.Content("~/Mission/GetLabelName")`)
             const getlabelname = await lbresponse.json();
             const lbnaoptions = getlabelname.map(opt => {
                 const selected = opt.taskLabelName == datas.taskLabelName ? 'selected' : '';
                 return `<option value="${opt.taskLabelName}" ${selected}>${opt.taskLabelName}</option>`;
             }).join('');
-            const setperiodresponse = await fetch(`@Url.Content("~/task/GetSetPeriodContent")`)
+            const setperiodresponse = await fetch(`@Url.Content("~/Mission/GetSetPeriodContent")`)
             const getsetperiod = await setperiodresponse.json();
             const setperiodoptions = getsetperiod.map(opt => {
                 const checked = opt == datas.setPeriod ? 'checked' : '';
@@ -248,7 +248,7 @@
         //垃圾桶(刪除)button_刪除任務
         document.getElementById('deletesubmit').addEventListener('click', async ()=>{
             if (!currentdeleteid) return console.log("沒有該任務編號");
-            await fetch(`@Url.Content("~/task/DeleteSingleTask")?singletaskid=${currentdeleteid}`);
+            await fetch(`@Url.Content("~/Mission/DeleteSingleTask")?singletaskid=${currentdeleteid}`);
             //彈跳介面已經經由fetch(非同步請求)，故只能用js進行手動關閉modal
             const deletemodal = bootstrap.Modal.getInstance(document.getElementById('deleteTaskModel'));
             if (deletemodal) bootstrap.Modal.getInstance(document.getElementById('deleteTaskModel')).hide();

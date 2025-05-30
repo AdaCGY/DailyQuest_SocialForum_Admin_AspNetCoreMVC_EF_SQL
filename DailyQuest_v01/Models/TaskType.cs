@@ -9,5 +9,5 @@ public partial class TaskType
 
     public string TaskTypeName { get; set; } = null!;
 
-    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+    public virtual ICollection<Mission> Missions { get; set; } = new List<Mission>();
 }

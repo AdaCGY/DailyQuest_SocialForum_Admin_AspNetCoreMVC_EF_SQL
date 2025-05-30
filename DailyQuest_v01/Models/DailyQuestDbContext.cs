@@ -83,7 +83,7 @@ public partial class DailyQuestDbContext : DbContext
 
     public virtual DbSet<SuperAdminPermission> SuperAdminPermissions { get; set; }
 
-    public virtual DbSet<Task> Tasks { get; set; }
+    public virtual DbSet<Mission> Missions { get; set; }
 
     public virtual DbSet<TaskLabel> TaskLabels { get; set; }
 
@@ -727,7 +727,7 @@ public partial class DailyQuestDbContext : DbContext
             entity.Property(e => e.FinishDate).HasColumnType("datetime");
             entity.Property(e => e.TaskContent).HasMaxLength(50);
 
-            entity.HasOne(d => d.Task).WithMany(p => p.SubTasks)
+            entity.HasOne(d => d.Mission).WithMany(p => p.SubTasks)
                 .HasForeignKey(d => d.TaskId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SubTask_Task");
@@ -812,9 +812,9 @@ public partial class DailyQuestDbContext : DbContext
                 .HasColumnName("permission_name");
         });
 
-        modelBuilder.Entity<Task>(entity =>
+        modelBuilder.Entity<Mission>(entity =>
         {
-            entity.ToTable("Task");
+            entity.ToTable("Mission");
 
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.ExpectDate).HasColumnType("datetime");
@@ -822,26 +822,26 @@ public partial class DailyQuestDbContext : DbContext
             entity.Property(e => e.SetPeriod).HasMaxLength(50);
             entity.Property(e => e.TaskContent).HasMaxLength(50);
 
-            entity.HasOne(d => d.SubTask).WithMany(p => p.Tasks)
+            entity.HasOne(d => d.SubTask).WithMany(p => p.Missions)
                 .HasForeignKey(d => d.SubTaskId)
                 .HasConstraintName("FK_Task_SubTask");
 
-            entity.HasOne(d => d.TaskLabel).WithMany(p => p.Tasks)
+            entity.HasOne(d => d.TaskLabel).WithMany(p => p.Missions)
                 .HasForeignKey(d => d.TaskLabelId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Task_TaskLabel");
 
-            entity.HasOne(d => d.TaskResult).WithMany(p => p.Tasks)
+            entity.HasOne(d => d.TaskResult).WithMany(p => p.Missions)
                 .HasForeignKey(d => d.TaskResultId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Task_TaskResult");
 
-            entity.HasOne(d => d.TaskType).WithMany(p => p.Tasks)
+            entity.HasOne(d => d.TaskType).WithMany(p => p.Missions)
                 .HasForeignKey(d => d.TaskTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Task_TaskType");
 
-            entity.HasOne(d => d.Tool).WithMany(p => p.Tasks)
+            entity.HasOne(d => d.Tool).WithMany(p => p.Missions)
                 .HasForeignKey(d => d.ToolId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Task_Tool");
@@ -915,7 +915,7 @@ public partial class DailyQuestDbContext : DbContext
             entity.Property(e => e.UserId).ValueGeneratedNever();
             entity.Property(e => e.EndDate).HasColumnType("datetime");
 
-            entity.HasOne(d => d.Task).WithMany(p => p.UserAndTaskRs)
+            entity.HasOne(d => d.Mission).WithMany(p => p.UserAndTaskRs)
                 .HasForeignKey(d => d.TaskId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UserAndTaskRS_Task");
