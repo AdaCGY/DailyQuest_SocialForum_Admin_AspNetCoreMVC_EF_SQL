@@ -67,14 +67,18 @@ namespace DailyQuest_v01.Controllers
             var target = await _db.Missions.FirstOrDefaultAsync(t => t.TaskId == singletask.TaskId);
             var tasktype = await _db.TaskTypes.FirstOrDefaultAsync(t => t.TaskTypeName == singletask.TaskTypeName);
             var tasklabel = await _db.TaskLabels.FirstOrDefaultAsync(t => t.TaskLabelName == singletask.TaskLabelName);
+            var taskresult = await _db.TaskResults.FirstOrDefaultAsync(t => t.TaskResultName == singletask.TaskResultName);
+            Console.WriteLine(singletask);
             if (target == null) return BadRequest("資料庫找不到相符的資料");
             if (tasktype == null) return BadRequest("任務類型沒有符合資料"); 
             if (tasklabel == null) return BadRequest("任務標籤沒有符合資料");
+            if (taskresult == null) return BadRequest("任務結果沒有符合資料");
             target.TaskTypeId = tasktype.TaskTypeId;
             target.TaskLabelId = tasklabel.TaskLabelId;
             target.TaskContent = singletask.TaskContent ?? string.Empty;
             target.ExpectDate = singletask.ExpectDate;
             target.SetPeriod = singletask.SetPeriod;
+            target.TaskResultId = taskresult.TaskResultId;
             await _db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
@@ -136,8 +140,12 @@ namespace DailyQuest_v01.Controllers
             var model = await _db.TaskTypes.ToListAsync();
             return Json(model);
         }
-        public async Task<IActionResult> GetLabelName(){
+        public async Task<IActionResult> GetLabelName() {
             var model = await _db.TaskLabels.ToListAsync();
+            return Json(model); 
+        }
+        public async Task<IActionResult> GetResultName(){
+            var model = await _db.TaskResults.ToListAsync();
             return Json(model);
         }
         public List<string> GetSetPeriodContent() {

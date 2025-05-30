@@ -138,7 +138,10 @@
         //把ISO格式(yyyy-MM-ddT~)轉為yyyy-MM-dd
         const formatDate = (dateStr) => {
             const data = new Date(dateStr);
-            return data.toISOString().split('T')[0];
+            const year = data.getFullYear();
+            const month = String(data.getMonth() + 1).padStart(2, '0');
+            const day = String(data.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         };
         //用於呈現於頁面上的task資料表
         const loadDate = async () => {
@@ -167,11 +170,11 @@
         loadDate();
         //放大鏡(修改)button_彈出介面
         const replacebtn = (async (taskid) => {
+            console.log(formatDate("2025-06-01T00:00:00"));
             const myModal = new bootstrap.Modal(document.getElementById('replaceTaskModel'));
             //抓取目前選取的資料內容
             const response = await fetch(`@Url.Content("~/Mission/GetSingleTask")?singletaskid=${taskid}`);
             const datas = await response.json();
-            console.log(datas);
             //從後台抓取任務類型、任務標籤、週期設定
             const tyresponse = await fetch(`@Url.Content("~/Mission/GetTypeName")`)
             const gettypename = await tyresponse.json();
@@ -189,11 +192,17 @@
             const getsetperiod = await setperiodresponse.json();
             const setperiodoptions = getsetperiod.map(opt => {
                 const checked = opt == datas.setPeriod ? 'checked' : '';
-                return `<input class="form-check-input" id="${datas.taskId}" name="setperiod" type="radio" value="${opt}" ${checked}>
-                <label class="form-check-label" name="setperiod">${opt}</label>`;
+                return `<input class="form-check-input" id="SetPeriod_${opt}" name="SetPeriod" type="radio" value="${opt}" ${checked}>
+                <label for="SetPeriod_${opt}" class="form-check-label" name="SetPeriod">${opt}</label>`;
             }).join('');
-            const htmlData = (() => {
-                return `
+            const rtresponse = await fetch(`@Url.Content("~/Mission/GetResultName")`)
+            const getresultname = await rtresponse.json();
+            const rtnaoptions = getresultname.map(opt => {
+                const checked = opt.taskResultName == datas.taskResultName ? 'checked' : '';
+                return `<input class="form-check-input" id="TaskResultName" name="TaskResultName" type="radio" value="${opt.taskResultName}" ${checked}>
+                <label for="TaskResultName" class="form-check-label" name="TaskResultName">${opt.taskResultName}</label>`;
+            }).join('');
+            const htmlData = `
                 <input type="hidden" name="TaskId" value="${datas.taskId}">
                 <div class="mb-3 row">
                     <label for="TaskTypeName" class="col-sm-2 col-form-label">任務類型</label>
@@ -219,32 +228,38 @@
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label name="ExpectDate" class="col-sm-2 col-form-label">設定完成日</label>
+                    <label for="ExpectDate" class="col-sm-2 col-form-label">設定完成日</label>
                     <div class="col-sm-10">
-                        <input class="form-control" name="ExpectDate" type="date" value="${formatDate(datas.expectDate)}">
+                        <input id="ExpectDate" class="form-control" name="ExpectDate" type="date" value="${formatDate(datas.expectDate)}">
                         <span asp-validation-for="ExpectDate" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label asp-for="SetPeriod" class="col-sm-2 col-form-label"></label>
+                    <label for="SetPeriod" class="col-sm-2 col-form-label">週期設定</label>
                     <div class="col-sm-10">
                         ${setperiodoptions}
                     </div>
                     <span asp-validation-for="SetPeriod" class="text-danger"></span>
                 </div>
-                `
-            });
-            document.querySelector('#replacetaskform .modal-body').innerHTML = htmlData();
+                <div class="mb-3 row">
+                    <label for="TaskResultName" class="col-sm-2 col-form-label">任務結果</label>
+                    <div class="col-sm-10">
+                        ${rtnaoptions}
+                    </div>
+                    <span asp-validation-for="TaskResultName" class="text-danger"></span>
+                </div>
+            `;
+            document.querySelector('#replacetaskform .modal-body').innerHTML = htmlData;
             myModal.show();
             return datas;
         });
         let currentdeleteid = null;
         //垃圾桶(刪除)button_是否刪除的彈跳介面
-        const deletebtn = ((singletaskid) => {
+        const deletebtn = (singletaskid) => {
             currentdeleteid = singletaskid;
             const myModal = new bootstrap.Modal(document.getElementById('deleteTaskModel'));
             myModal.show();
-        });
+        };
         //垃圾桶(刪除)button_刪除任務
         document.getElementById('deletesubmit').addEventListener('click', async ()=>{
             if (!currentdeleteid) return console.log("沒有該任務編號");
