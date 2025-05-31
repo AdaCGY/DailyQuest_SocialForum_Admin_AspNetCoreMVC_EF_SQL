@@ -143,7 +143,7 @@
             const day = String(data.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         };
-        //用於呈現於頁面上的task資料表
+        //用於顯示目前資料庫所有存在的任務
         const loadDate = async () => {
             const response = await fetch(`@Url.Content("~/Mission/GetAllTasks")`);
             const datas = await response.json();
@@ -268,6 +268,42 @@
             const deletemodal = bootstrap.Modal.getInstance(document.getElementById('deleteTaskModel'));
             if (deletemodal) bootstrap.Modal.getInstance(document.getElementById('deleteTaskModel')).hide();
             loadDate();
+        });
+        //關鍵字搜尋
+        const inputsearch = document.getElementById('inputSearch');
+        const columnCount = document.querySelectorAll('thead th').length;
+        inputsearch.addEventListener('keyup', async (event) => {
+            if (event.key == 'Enter' && inputsearch.value != ""){
+                const searchresponse = await fetch(`@Url.Content("/mission/SearchKeyword")?keyword=${inputsearch.value}`);
+                const datas = await searchresponse.json();
+                if (datas.length == 0 && inputsearch.value != ""){
+                    document.querySelector('tbody').innerHTML = `<tr><td colspan="${columnCount}" class="fs-3 fw-bolder text-center">找不到任何符合的資料</td></tr>`;
+                }
+                else{
+                    const htmlData = datas.map(select => {
+                        const {taskId, taskTypeName, taskLabelName, taskContent, expectDate, setPeriod, createDate, taskResultName} = select
+                        return `
+                        <tr>
+                        <td>
+                            <button id="replacetask${taskId}" onclick="replacebtn(${taskId})" value="${taskId}"><i class="fa-solid fa-magnifying-glass" style="margin:2px"></i></button>
+                            <button id="deletetask${taskId}" onclick="deletebtn(${taskId})"><i class="fa-solid fa-trash-can" style="margin:2px"></i></button>
+                        </td>
+                        <td class="text-center">${taskTypeName}</td>
+                        <td class="text-center">${taskLabelName}</td>
+                        <td class="text-center">${taskContent}</td>
+                        <td class="text-center">${formatDate(expectDate)}</td>
+                        <td class="text-center">${setPeriod}</td>
+                        <td class="text-center">${formatDate(createDate)}</td>
+                        <td class="text-center">${taskResultName}</td>
+                        </tr>
+                        `
+                    });
+                    document.querySelector('tbody').innerHTML = htmlData.join('');
+                }
+            }
+            else{
+                loadDate();
+            }
         });
     </script>
 }
