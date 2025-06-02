@@ -103,7 +103,7 @@ public partial class DailyQuestDbContext : DbContext
 
     public virtual DbSet<VirtualRole> VirtualRoles { get; set; }
 
-
+ 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Admin>(entity =>
