@@ -13,7 +13,8 @@
         <input type="search" class="form-control" id="inputSearch" placeholder="關鍵字搜尋" />
     </div>
 </div>
-<div class="table-responsive">
+<!--顯示表格tasks列表-->
+<div class="table-responsive bg-white">
     <table class="table table-hover text-nowrap align-middle">
         <thead class="table-light text-center">
             <tr>
@@ -30,6 +31,15 @@
         <tbody></tbody>
     </table>
 </div>
+<!--分頁-->
+<div style="min-height:60px" class="d-flex justify-content-center align-items-center bg-white">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination mb-0" id="pagination">
+        </ul>
+    </nav>
+</div>
+
+
 <!--用於新增任務的彈跳出介面-->
 <div class="modal fade" id="createTaskModel" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -38,7 +48,6 @@
                 <div class="text-danger" asp-validation-summary="ModelOnly"></div>
                 <div class="modal-header">
                     <h5 class="modal-title" id="createTaskLabel">新增任務</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3 row">
@@ -80,7 +89,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="createclose">關閉</button>
                     <button type="submit" class="btn btn-primary" id="createsubmit">儲存</button>
                 </div>
             </form>
@@ -95,7 +104,6 @@
                 <div class="text-danger" asp-validation-summary="ModelOnly"></div>
                 <div class="modal-header">
                     <h5 class="modal-title" id="replaceTaskLabel">修改任務</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                 </div>
@@ -131,9 +139,12 @@
     <script>
         //新增任務button_彈出介面
         const btnsubmit = document.querySelector('#createtask');
-        btnsubmit.addEventListener('click', (event) => {
+        btnsubmit.addEventListener('click', () => {
             const myModal = new bootstrap.Modal(document.getElementById('createTaskModel'));
             myModal.show();
+        });
+        document.getElementById('createclose').addEventListener('click', () => {
+            document.getElementById('createform').reset();
         });
         //把ISO格式(yyyy-MM-ddT~)轉為yyyy-MM-dd
         const formatDate = (dateStr) => {
@@ -143,12 +154,42 @@
             const day = String(data.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         };
-        //用於顯示目前資料庫所有存在的任務
-        const loadDate = async () => {
-            const response = await fetch(`@Url.Content("~/Mission/GetAllTasks")`);
+        //用於紀錄目前的頁數、總頁數、一頁有幾筆
+        let currentpage = 1;
+        let pagesize = 5;
+        let totalpages = 1;
+        //分頁介面IIFE
+        (async () => {
+            const tasksresponse = await fetch(`@Url.Content("~/Mission/GetAllTasks")`);
+            const tasksdatas = await tasksresponse.json();
+            const totaltaskscount = tasksdatas.length;
+            totalpages = Math.ceil(totaltaskscount / pagesize);
+            let pagetab = '';
+            for (var i = 1; i <= totalpages; i++){
+                pagetab += `<li class="page-item"><a class="page-link" value="${i}" onclick="pagefunction(${i})">${i}</a></li>`;
+            }
+            const htmlData = `
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous" onclick="previouspage()">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                ${pagetab}
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next" onclick="nextpage()">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            `;
+            document.getElementById('pagination').innerHTML = htmlData;
+        })();
+        //分頁_顯示目前資料庫第X頁所有存在的任務
+        const pagefunction = async (userpage) => {
+            currentpage = userpage;
+            const response = await fetch(`@Url.Content("~/Mission/Pagination")?currentpage=${currentpage}`);
             const datas = await response.json();
-            const htmlData = datas.map((data) => {
-                const {taskId, taskTypeName, taskLabelName, taskContent, expectDate, setPeriod, createDate, taskResultName} = data
+            const htmlData = datas.map(task => {
+                const {taskId, taskTypeName, taskLabelName, taskContent, expectDate, setPeriod, createDate, taskResultName} = task
                 return `
                     <tr>
                     <td>
@@ -166,8 +207,18 @@
                 `
             });
             document.querySelector('tbody').innerHTML = htmlData.join('');
-        };
-        loadDate();
+        }
+        pagefunction(currentpage);
+        //分頁功能_上一頁
+        const previouspage = () => {
+            currentpage = currentpage - 1 == 0 ? 1 : currentpage - 1;
+            pagefunction(currentpage);
+        }
+        //分頁功能_下一頁
+        const nextpage = () => {
+            currentpage = currentpage + 1 > totalpages? totalpages : currentpage + 1;
+            pagefunction(currentpage);
+        }
         //放大鏡(修改)button_彈出介面
         const replacebtn = (async (taskid) => {
             console.log(formatDate("2025-06-01T00:00:00"));
@@ -267,7 +318,7 @@
             //彈跳介面已經經由fetch(非同步請求)，故只能用js進行手動關閉modal
             const deletemodal = bootstrap.Modal.getInstance(document.getElementById('deleteTaskModel'));
             if (deletemodal) bootstrap.Modal.getInstance(document.getElementById('deleteTaskModel')).hide();
-            loadDate();
+            pagefunction(currentpage);
         });
         //關鍵字搜尋
         const inputsearch = document.getElementById('inputSearch');
@@ -302,7 +353,7 @@
                 }
             }
             else{
-                loadDate();
+                pagefunction(currentpage);
             }
         });
     </script>

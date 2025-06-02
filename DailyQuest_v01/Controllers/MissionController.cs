@@ -149,7 +149,7 @@ namespace DailyQuest_v01.Controllers
             return Json(model);
         }
         public List<string> GetSetPeriodContent() {
-            return new List<string>() { "不定期", "每日", "每月" };
+            return new List<string>() { "不定期", "每日", "每月"};
         }
         public async Task<IActionResult> SearchKeyword(string keyword) {
             var eachtask = await _db.Missions.Include(t => t.TaskType).Include(t => t.TaskLabel).Include(t => t.TaskResult).ToListAsync();
@@ -167,6 +167,21 @@ namespace DailyQuest_v01.Controllers
                 }).ToList();
             if (model == null) { return Json("找不到符合的資料"); }
             else { return Json(model); }
+        }
+        public async Task<IActionResult> Pagination(int currentpage) {
+            int pagesize = 5;
+            var origintasks = await _db.Missions.Include(t => t.TaskType).Include(t => t.TaskLabel).Include(t => t.TaskResult).ToListAsync();
+            var onepagetasks = origintasks.Select(task => new CreateTaskDTO {
+                TaskId = task.TaskId,
+                TaskTypeName = task.TaskType.TaskTypeName,
+                TaskLabelName = task.TaskLabel.TaskLabelName,
+                TaskContent = task.TaskContent,
+                ExpectDate = task.ExpectDate,
+                SetPeriod = task.SetPeriod,
+                CreateDate = task.CreateDate,
+                TaskResultName = task.TaskResult.TaskResultName
+            }).ToList().Skip((currentpage - 1) * pagesize).Take(pagesize);
+            return Json(onepagetasks);
         }
     }
 }
