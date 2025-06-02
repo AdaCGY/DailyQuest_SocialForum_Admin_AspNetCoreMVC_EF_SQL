@@ -9,7 +9,7 @@ public partial class TaskResult
 
     public string TaskResultName { get; set; } = null!;
 
-    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+    public virtual ICollection<Mission> Missions { get; set; } = new List<Mission>();
 
     public virtual ICollection<UserAndTaskR> UserAndTaskRs { get; set; } = new List<UserAndTaskR>();
 }
