@@ -21,6 +21,8 @@ public partial class User
 
     public DateTime? LastLoginTime { get; set; }
 
+    public int Status { get; set; }
+
     public virtual ICollection<UsersLoginLog> UsersLoginLogs { get; set; } = new List<UsersLoginLog>();
 
     public virtual ICollection<UsersRole> Permissions { get; set; } = new List<UsersRole>();
