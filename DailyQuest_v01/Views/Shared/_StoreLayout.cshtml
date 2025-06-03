@@ -193,17 +193,18 @@
         <!-- ============================================================== -->
         <!-- Page wrapper  -->
         <!-- ============================================================== -->
-        <div class="page-wrapper">
-
+        <div class="page-wrapper p-3">
+            <table class="table table-striped">
+                
             <!-- mvc -->
-            <div id="page-body-container">
-                @RenderBody()
-            </div>
+                <div id="page-body-container">
+                    @RenderBody() 
+                </div>
 
             <!-- AJAX （預設隱藏）-->
-            <div id="content-area" style="display: none;">
-            </div>
-
+                <div id="content-area" style="display: none;">
+                </div>
+            </table>
         </div>
         <!-- ============================================================== -->
         <!-- End Bread crumb and right sidebar toggle -->
@@ -259,17 +260,17 @@
 
     <script>
         //載入分類列表
-        function loadCategoriesPartial() {
-            $.get('@Url.Action("Categories", "Home")', function (html) {
-                $('#page-body-container').hide();
-                $('#content-area').html(html).fadeIn();
-            });
-        }
+        // function loadCategoriesPartial() {
+        //     $.get('@Url.Action("Categories", "Home")', function (html) {
+        //         $('#page-body-container').hide();
+        //         $('#content-area').html(html).fadeIn();
+        //     });
+        // }
 
-                $(document).on('click', '.load-categories', function (e) {
-            e.preventDefault();
-            loadCategoriesPartial();
-                });
+        //         $(document).on('click', '.load-categories', function (e) {
+        //     e.preventDefault();
+        //     loadCategoriesPartial();
+        //         });
     </script>
 </body>
 </html>

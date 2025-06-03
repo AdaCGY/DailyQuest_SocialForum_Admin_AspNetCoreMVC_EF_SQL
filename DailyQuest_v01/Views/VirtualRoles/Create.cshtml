@@ -4,13 +4,14 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>新增</h1>
 
-<h4>VirtualRole</h4>
+<h4>虛擬角色</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+        @* <form asp-action="Create"> *@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="RoleName" class="control-label"></label>
@@ -24,7 +25,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="RolePhoto" class="control-label"></label>
-                <input asp-for="RolePhoto" class="form-control" />
+                @* <input asp-for="RolePhoto" class="form-control" /> *@
+                <input asp-for="RolePhoto" class="form-control" type="file" name="theFile" />
+
+                <button type="submit" class="btn btn-secondary ml-2">上傳</button>
+
                 <span asp-validation-for="RolePhoto" class="text-danger"></span>
             </div>
             <div class="form-group">
