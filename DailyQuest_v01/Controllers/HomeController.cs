@@ -60,6 +60,10 @@ namespace DailyQuest_v01.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (_context.PostCategories.Any(c => c.CategoryName == postCategory.CategoryName && c.CategoryId != postCategory.CategoryId)) // 檢查是否有重複的類別名稱
+                {
+                    return Json(new { success = false, message = "類別名稱已存在，請重新命名" });
+                }
                 _context.PostCategories.Add(postCategory);
                 await _context.SaveChangesAsync();
                 return Json(new { success = true, message = "新增成功" });
@@ -84,7 +88,7 @@ namespace DailyQuest_v01.Controllers
         {
             if (ModelState.IsValid) // 驗證資料是否正確
             {
-                if(_context.PostCategories.Any(c=>c.CategoryName == postCategories.CategoryName)) // 檢查是否有重複的類別名稱
+                if(_context.PostCategories.Any(c=>c.CategoryName == postCategories.CategoryName && c.CategoryId != postCategories.CategoryId)) // 檢查是否有重複的類別名稱
                 {
                     return Json(new { success = false, message = "類別名稱已存在，請重新命名" });
                 }
@@ -95,23 +99,33 @@ namespace DailyQuest_v01.Controllers
             return Json(new { success = false, message = "編輯失敗" });
         }
 
-        [HttpGet] //新增檢舉類別
-        public IActionResult CreateReportCategory()
-        {
-            return View();
-        }
-
-        [HttpPost] 
-        public async Task<IActionResult> CreateReportCategory(ReportCategory reportCategory)
+        [HttpPost]
+        public async Task<IActionResult> CreateReportCategory([FromBody] ReportCategory reportCategory)
         {
             reportCategory.CreatedAt = DateTime.Now;
-            if (ModelState.IsValid) // 驗證資料是否正確
+            if (ModelState.IsValid)
             {
-                _context.ReportCategories.Add(reportCategory); // 新增這筆分類資料
-                await _context.SaveChangesAsync(); // 寫入資料庫
-                return RedirectToAction("Categories"); //導回管理主頁
+                if (_context.ReportCategories.Any(c => c.ReportCategoryName == reportCategory.ReportCategoryName)) // 檢查是否有重複的類別名稱
+                {
+                    return Json(new { success = false, message = "檢舉類別已存在，請重新命名" });
+                }
+                _context.ReportCategories.Add(reportCategory);
+                await _context.SaveChangesAsync();
+
+                return Json(new
+                {
+                    success = true,
+                    message = "新增成功",
+                    data = new
+                    {
+                        id = reportCategory.ReportCategoryId,
+                        name = reportCategory.ReportCategoryName
+                    }
+                });
             }
-            return NoContent();
+
+            return Json(new { success = false, message = "新增失敗" });
+        
         }
 
         [HttpGet] //編輯檢舉類別
@@ -120,9 +134,9 @@ namespace DailyQuest_v01.Controllers
             var reportCategory = await _context.ReportCategories.FindAsync(id);
             if (reportCategory == null)
             {
-                return NotFound();
+                return NotFound(new { success = false, message = "找不到資料" });
             }
-            return View(reportCategory);
+            return PartialView("~/Views/Home/Partials/_EditReportCategoryPartial.cshtml", reportCategory);
         }
 
         [HttpPost] 
@@ -131,11 +145,15 @@ namespace DailyQuest_v01.Controllers
             reportCategory.CreatedAt = DateTime.Now;
             if (ModelState.IsValid) // 驗證資料是否正確
             {
+                if(_context.ReportCategories.Any(c => c.ReportCategoryName == reportCategory.ReportCategoryName && c.ReportCategoryId != reportCategory.ReportCategoryId)) // 檢查是否有重複的類別名稱
+                {
+                    return Json(new { success = false, message = "檢舉類別已存在，請重新命名" });
+                }
                 _context.ReportCategories.Update(reportCategory); // 更新這筆分類資料
                 await _context.SaveChangesAsync(); // 寫入資料庫
-                return RedirectToAction("Categories"); //導回管理主頁
+                return Json(new { success = true, message = "編輯成功" });
             }
-            return NoContent();
+            return Json((new { success = false, message = "編輯失敗" }));
         }
 
         public IActionResult Privacy()

@@ -25,6 +25,7 @@
         <div class="border-top">
             <div class="card-body">
                 <button type="submit" class="btn btn-primary">新增確認</button>
+                <button class="cancel-edit btn btn-secondary">取消</button>
             </div>
         </div>
     </form>
@@ -60,6 +61,10 @@
         });
 
     });
+     $(document).on('click', '.cancel-edit', function (e) {
+            e.preventDefault();
+            loadCategoriesPartial();
+                });
 </script>
 
 

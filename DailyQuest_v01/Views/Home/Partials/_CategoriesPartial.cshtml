@@ -75,29 +75,56 @@
                             <td>@item.Description</td>
                             <td>@item.CreatedAt</td>
                             <td>
-                                <a asp-action="EditReportCategory" asp-route-id="@item.ReportCategoryId" class="btn btn-outline-info">編輯</a>
+                                <a href="#" class="btn btn-outline-info load-edit-report-category" id="@item.ReportCategoryId">編輯</a>
                                 <button class="btn-delete-report btn btn-outline-danger" data-id="@item.ReportCategoryId">刪除</button>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-            <a type="button" class="btn btn-outline-success" asp-controller="Home" asp-action="CreateReportCategory">新增類別</a>
+            <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#createReportCategoryModal">新增類別</button>
+        </div>
+    </div>
+</div>
+<!-- Modal 彈出視窗 -->
+<div class="modal fade" id="createReportCategoryModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">新增檢舉類別</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createReportCategoryForm">
+                    <div class="mb-3">
+                        <label for="reportCategoryName" class="form-label">類別名稱</label>
+                        <input type="text" class="form-control" id="reportCategoryName" name="reportCategoryName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">說明</label>
+                        <input type="text" class="form-control" id="description" name="description">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="cancel-createReportCategories btn btn-secondary">取消</button>
+                <button type="button" class="btn btn-primary" id="submitCreateReportCategory">送出</button>
+            </div>
         </div>
     </div>
 </div>
 
 
-
 <script>
     $(document).on('click', '.btn-delete-post', function () {
     const id = $(this).data('id');
+         if (!confirm("你確定要刪除這個分類嗎？")) return;
+
         $.ajax({
                 url: "https://localhost:7131/API/DeletePostCategory/"+id,
             type: 'DELETE',
             success: function (data) {
                 if (data.success) {
-                    if (!confirm("你確定要刪除這個分類嗎？")) return;
                     $(`#row-${id}`).remove();
                     alert("貼文類別刪除成功！編號為 "+id);
                 } else {
@@ -110,12 +137,12 @@
 
     $(document).on('click', '.btn-delete-report', function () {
         const id = $(this).data('id');
+             if (!confirm("你確定要刪除這個檢舉項目嗎？")) return;
             $.ajax({
                         url: "https://localhost:7131/API/DeleteReportCategory/"+id,
                 type: 'DELETE',
                 success: function (data) {
                     if (data.success) {
-                        if (!confirm("你確定要刪除這個檢舉項目嗎？")) return;
                         $(`#row-${id}`).remove();
                         alert("檢舉類別項目刪除成功！編號為 "+id);
                     } else {
@@ -126,7 +153,7 @@
             });
         });
 
-           $(document).on('click', '.load-create-post-category', function (e) {
+    $(document).on('click', '.load-create-post-category', function (e) {
            e.preventDefault();
 
            $.get('@Url.Action("CreatePostCategory", "Home")', function (result) {
@@ -138,7 +165,7 @@
              });
           });
 
-          $(document).on('click', '.load-edit-post-category', function (e) {
+    $(document).on('click', '.load-edit-post-category', function (e) {
            e.preventDefault();
            const id = $(this).attr('id');
 
@@ -148,8 +175,51 @@
 
                 // 僅做右側內容更新
                 $('#content-area').html(result).fadeIn();
-             });
-          });
-             
+           });
+    });
+
+     $(document).on('click', '.load-edit-report-category', function (e) {
+          e.preventDefault();
+         const id = $(this).attr('id');
+
+         $.get('@Url.Action("EditReportCategory", "Home")' + '/' + id, function (result) {
+             // 隱藏原本的整頁內容
+             $('#page-body-container').hide();
+
+             // 僅做右側內容更新
+             $('#content-area').html(result).fadeIn();
+         });
+     });
+
+    $('#submitCreateReportCategory').on('click', function () {
+      const data = {
+        reportCategoryName: $('#reportCategoryName').val(),
+        description: $('#description').val()
+      };
+
+      $.ajax({
+        url: '/Home/CreateReportCategory',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (res) {
+          if (res.success) {
+            alert(res.message);
+            $('#createReportCategoryModal').modal('hide');
+            $('#reportCategoryName').val('');
+            $('#description').val('');
+            loadCategoriesPartial();
+          } 
+          else {
+            alert("新增失敗：" + res.message);
+          }
+        },
+     });
+   });
+
+    $(document).on('click', '.cancel-createReportCategories', function (e) {
+      e.preventDefault();
+      $('#createReportCategoryModal').modal('hide');
+    });
 </script>
 

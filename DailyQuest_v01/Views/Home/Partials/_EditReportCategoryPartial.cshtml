@@ -1,7 +1,4 @@
 ﻿@model DailyQuest_v01.Models.ReportCategory
-@{
-    Layout = "~/Views/Shared/SocialLayout.cshtml";
-}
 
 <div class="page-breadcrumb">
     <div class="row">
@@ -13,7 +10,7 @@
 </div>
 
 <div class="card">
-    <form asp-action="EditReportCategory" method="post">
+    <form id="editReportCategoryForm">
         <div class="card-body">
             <input type="hidden" asp-for="ReportCategoryId" />
 
@@ -34,8 +31,33 @@
         <div class="border-top">
             <div class="card-body">
                 <button type="submit" class="btn btn-primary">儲存</button>
-                <a asp-action="Categories" class="btn btn-secondary">取消</a>
+                <button class="cancel-edit btn btn-secondary">取消</button>
             </div>
         </div>
     </form>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('#editReportCategoryForm').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '@Url.Action("EditReportCategory", "Home")',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        alert(res.message);
+                        loadCategoriesPartial(); // 成功後重新載入列表
+                    } else {
+                        alert(res.message);
+                    }
+                }
+            });
+        });
+    });
+    $(document).on('click', '.cancel-edit', function (e) {
+            e.preventDefault();
+            loadCategoriesPartial();
+                });
+</script>
