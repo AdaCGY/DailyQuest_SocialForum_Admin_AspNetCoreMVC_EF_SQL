@@ -13,7 +13,7 @@ public partial class Comment
 
     public DateTime CommentedAt { get; set; }
 
-    public int UserId { get; set; }
+    public int MemberId { get; set; }
 
     public string CommentsContent { get; set; } = null!;
 
@@ -21,9 +21,9 @@ public partial class Comment
 
     public virtual ICollection<Comment> InverseParentComment { get; set; } = new List<Comment>();
 
+    public virtual Member Member { get; set; } = null!;
+
     public virtual Comment? ParentComment { get; set; }
 
     public virtual Post Post { get; set; } = null!;
-
-    public virtual Member User { get; set; } = null!;
 }
