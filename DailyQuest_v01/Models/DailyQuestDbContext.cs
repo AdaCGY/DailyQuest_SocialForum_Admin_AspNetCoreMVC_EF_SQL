@@ -103,7 +103,6 @@ public partial class DailyQuestDbContext : DbContext
 
     public virtual DbSet<VirtualRole> VirtualRoles { get; set; }
 
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Admin>(entity =>
@@ -645,10 +644,12 @@ public partial class DailyQuestDbContext : DbContext
             entity.Property(e => e.ReportCategoryId).HasColumnName("ReportCategoryID");
             entity.Property(e => e.ReportContent).HasColumnType("text");
             entity.Property(e => e.ReportedAt).HasColumnType("datetime");
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .HasDefaultValue("Pending");
 
             entity.HasOne(d => d.Admin).WithMany(p => p.Reports)
                 .HasForeignKey(d => d.AdminId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Reports_Admins");
 
             entity.HasOne(d => d.Member).WithMany(p => p.Reports)
