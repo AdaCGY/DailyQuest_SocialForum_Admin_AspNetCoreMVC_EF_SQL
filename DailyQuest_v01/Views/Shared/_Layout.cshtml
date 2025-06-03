@@ -9,13 +9,13 @@
     <meta name="keywords" content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 5 admin, bootstrap 5, css3 dashboard, bootstrap 5 dashboard, Matrix lite admin bootstrap 5 dashboard, frontend, responsive bootstrap 5 admin template, Matrix admin lite design, Matrix admin lite dashboard bootstrap 5 dashboard template">
     <meta name="description" content="Matrix Admin Lite Free Version is powerful and clean admin dashboard template, inpired from Bootstrap Framework">
     <meta name="robots" content="noindex,nofollow">
-    <title>Matrix Admin Lite Free Versions Template by WrapPixel</title>
+    <title>DailyQuest</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
     <!-- Custom CSS -->
-    <link href="../assets/libs/flot/css/float-chart.css" rel="stylesheet">
+    <link href="~/assets/libs/flot/css/float-chart.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link href="../dist/css/style.min.css" rel="stylesheet">
+    <link href="~/dist/css/style.min.css" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -76,13 +76,13 @@
                         <b class="logo-icon ps-2">
                             <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                             <!-- Dark Logo icon -->
-                            <img src="../assets/images/logo-icon.png" alt="homepage" class="light-logo" width="25">
+                            <img src="~/assets/images/logo-icon.png" alt="homepage" class="light-logo" width="25">
                         </b>
                         <!--End Logo icon -->
                         <!-- Logo text -->
                         <span class="logo-text ms-2">
                             <!-- dark Logo text -->
-                            <img src="../assets/images/logo-text.png" alt="homepage" class="light-logo">
+                            <img src="~/assets/images/logo-text.png" alt="homepage" class="light-logo">
                         </span>
                         <!-- Logo icon -->
                         <!-- <b class="logo-icon"> -->
@@ -257,7 +257,7 @@
                     waves-effect waves-dark
                     pro-pic
                   " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="../assets/images/users/1.jpg" alt="user" class="rounded-circle" width="31">
+                                <img src="~/assets/images/users/1.jpg" alt="user" class="rounded-circle" width="31">
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end user-dd animated" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="javascript:void(0)"><i class="mdi mdi-account me-1 ms-1"></i> My Profile</a>
@@ -295,113 +295,35 @@
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav" class="pt-4 in">
+                        <!-- ============================================================== -->
+                        <!--總首頁-->
+                        <!-- ============================================================== -->
                         <li class="sidebar-item selected">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link active" href="index.html" aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span class="hide-menu">Dashboard</span></a>
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link active" href="index.html" aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span class="hide-menu">後台管理總覽</span></a>
                         </li>
+                        <!-- ============================================================== -->
+                        <!--會員管理-->
+                        <!-- ============================================================== -->
                         <li class="sidebar-item">
-                            <a class="sidebar-link has-arrow waves-effect waves-dark sidebar-link" asp-controller="Home" asp-action="StoreIndex" aria-expanded="false"><i class="mdi mdi-chart-bar"></i><span class="hide-menu">商城</span></a>
-                            <ul aria-expanded="false" class="collapse first-level">
-                                <li class="sidebar-item">
-                                    <a asp-controller="Home" asp-action="StoreIndex" class="sidebar-link"><i class="mdi mdi-note-outline"></i><span class="hide-menu"> 商城管理 </span></a>
-                                </li>
-                            </ul>
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="charts.html" aria-expanded="false"><i class="mdi mdi-chart-bar"></i><span class="hide-menu">會員管理</span></a>
                         </li>
+                        <!-- ============================================================== -->
+                        <!--任務管理-->
+                        <!-- ============================================================== -->
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="widgets.html" aria-expanded="false"><i class="mdi mdi-chart-bubble"></i><span class="hide-menu">Widgets</span></a>
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="widgets.html" aria-expanded="false"><i class="mdi mdi-chart-bubble"></i><span class="hide-menu">任務管理</span></a>
                         </li>
+                        <!-- ============================================================== -->
+                        <!--社交管理-->
+                        <!-- ============================================================== -->
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="tables.html" aria-expanded="false"><i class="mdi mdi-border-inside"></i><span class="hide-menu">Tables</span></a>
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="tables.html" aria-expanded="false"><i class="mdi mdi-border-inside"></i><span class="hide-menu">社交管理</span></a>
                         </li>
+                        <!-- ============================================================== -->
+                        <!--商城管理-->
+                        <!-- ============================================================== -->
                         <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="grid.html" aria-expanded="false"><i class="mdi mdi-blur-linear"></i><span class="hide-menu">Full Width</span></a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="mdi mdi-receipt"></i><span class="hide-menu">Forms </span></a>
-                            <ul aria-expanded="false" class="collapse first-level">
-                                <li class="sidebar-item">
-                                    <a href="form-basic.html" class="sidebar-link"><i class="mdi mdi-note-outline"></i><span class="hide-menu"> Form Basic </span></a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="form-wizard.html" class="sidebar-link"><i class="mdi mdi-note-plus"></i><span class="hide-menu"> Form Wizard </span></a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="pages-buttons.html" aria-expanded="false"><i class="mdi mdi-relative-scale"></i><span class="hide-menu">Buttons</span></a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="mdi mdi-face"></i><span class="hide-menu">Icons </span></a>
-                            <ul aria-expanded="false" class="collapse first-level">
-                                <li class="sidebar-item">
-                                    <a href="icon-material.html" class="sidebar-link"><i class="mdi mdi-emoticon"></i><span class="hide-menu"> Material Icons </span></a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="icon-fontawesome.html" class="sidebar-link"><i class="mdi mdi-emoticon-cool"></i><span class="hide-menu"> Font Awesome Icons </span></a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="pages-elements.html" aria-expanded="false"><i class="mdi mdi-pencil"></i><span class="hide-menu">Elements</span></a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="mdi mdi-move-resize-variant"></i><span class="hide-menu">Addons </span></a>
-                            <ul aria-expanded="false" class="collapse first-level">
-                                <li class="sidebar-item">
-                                    <a href="index2.html" class="sidebar-link"><i class="mdi mdi-view-dashboard"></i><span class="hide-menu"> Dashboard-2 </span></a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="pages-gallery.html" class="sidebar-link"><i class="mdi mdi-multiplication-box"></i><span class="hide-menu"> Gallery </span></a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="pages-calendar.html" class="sidebar-link"><i class="mdi mdi-calendar-check"></i><span class="hide-menu"> Calendar </span></a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="pages-invoice.html" class="sidebar-link"><i class="mdi mdi-bulletin-board"></i><span class="hide-menu"> Invoice </span></a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="pages-chat.html" class="sidebar-link"><i class="mdi mdi-message-outline"></i><span class="hide-menu"> Chat Option </span></a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="mdi mdi-account-key"></i><span class="hide-menu">Authentication </span></a>
-                            <ul aria-expanded="false" class="collapse first-level">
-                                <li class="sidebar-item">
-                                    <a href="authentication-login.html" class="sidebar-link"><i class="mdi mdi-all-inclusive"></i><span class="hide-menu"> Login </span></a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="authentication-register.html" class="sidebar-link"><i class="mdi mdi-all-inclusive"></i><span class="hide-menu"> Register </span></a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="mdi mdi-alert"></i><span class="hide-menu">Errors </span></a>
-                            <ul aria-expanded="false" class="collapse first-level">
-                                <li class="sidebar-item">
-                                    <a href="error-403.html" class="sidebar-link"><i class="mdi mdi-alert-octagon"></i><span class="hide-menu"> Error 403 </span></a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="error-404.html" class="sidebar-link"><i class="mdi mdi-alert-octagon"></i><span class="hide-menu"> Error 404 </span></a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="error-405.html" class="sidebar-link"><i class="mdi mdi-alert-octagon"></i><span class="hide-menu"> Error 405 </span></a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="error-500.html" class="sidebar-link"><i class="mdi mdi-alert-octagon"></i><span class="hide-menu"> Error 500 </span></a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="sidebar-item p-3">
-                            <a href="https://github.com/wrappixel/matrix-admin-bt5" target="_blank" class="
-                    w-100
-                    btn btn-cyan
-                    d-flex
-                    align-items-center
-                    text-white
-                  ">
-                                <i class="mdi mdi-cloud-download font-20 me-2"></i>Download
-                                Free
-                            </a>
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="grid.html" aria-expanded="false"><i class="mdi mdi-blur-linear"></i><span class="hide-menu">商城管理</span></a>
                         </li>
                     </ul>
                 </nav>
@@ -439,10 +361,13 @@
             <!-- ============================================================== -->
             <!-- End Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
+
+
             <!-- ============================================================== -->
-            <!-- Container fluid  -->
+            <!-- 首頁要放的東西  -->
             <!-- ============================================================== -->
-            <div class="container-fluid">
+
+            @* <div class="container-fluid">
                 <!-- ============================================================== -->
                 <!-- Sales Cards  -->
                 <!-- ============================================================== -->
@@ -674,7 +599,7 @@
                                 <!-- Comment Row -->
                                 <div class="d-flex flex-row comment-row">
                                     <div class="p-2">
-                                        <img src="../assets/images/users/4.jpg" alt="user" width="50" class="rounded-circle">
+                                        <img src="~/assets/images/users/4.jpg" alt="user" width="50" class="rounded-circle">
                                     </div>
                                     <div class="comment-text active w-100">
                                         <h6 class="font-medium">Michael Jorden</h6>
@@ -699,7 +624,7 @@
                                 <!-- Comment Row -->
                                 <div class="d-flex flex-row comment-row">
                                     <div class="p-2">
-                                        <img src="../assets/images/users/5.jpg" alt="user" width="50" class="rounded-circle">
+                                        <img src="~/assets/images/users/5.jpg" alt="user" width="50" class="rounded-circle">
                                     </div>
                                     <div class="comment-text w-100">
                                         <h6 class="font-medium">Johnathan Doeting</h6>
@@ -963,7 +888,7 @@
                                         <!--chat Row -->
                                         <li class="chat-item">
                                             <div class="chat-img">
-                                                <img src="../assets/images/users/1.jpg" alt="user">
+                                                <img src="~/assets/images/users/1.jpg" alt="user">
                                             </div>
                                             <div class="chat-content">
                                                 <h6 class="font-medium">James Anderson</h6>
@@ -977,7 +902,7 @@
                                         <!--chat Row -->
                                         <li class="chat-item">
                                             <div class="chat-img">
-                                                <img src="../assets/images/users/2.jpg" alt="user">
+                                                <img src="~/assets/images/users/2.jpg" alt="user">
                                             </div>
                                             <div class="chat-content">
                                                 <h6 class="font-medium">Bianca Doe</h6>
@@ -1046,7 +971,7 @@
                                 <!-- Comment Row -->
                                 <div class="d-flex flex-row comment-row mt-0">
                                     <div class="p-2">
-                                        <img src="../assets/images/users/1.jpg" alt="user" width="50" class="rounded-circle">
+                                        <img src="~/assets/images/users/1.jpg" alt="user" width="50" class="rounded-circle">
                                     </div>
                                     <div class="comment-text w-100">
                                         <h6 class="font-medium">James Anderson</h6>
@@ -1071,7 +996,7 @@
                                 <!-- Comment Row -->
                                 <div class="d-flex flex-row comment-row">
                                     <div class="p-2">
-                                        <img src="../assets/images/users/4.jpg" alt="user" width="50" class="rounded-circle">
+                                        <img src="~/assets/images/users/4.jpg" alt="user" width="50" class="rounded-circle">
                                     </div>
                                     <div class="comment-text active w-100">
                                         <h6 class="font-medium">Michael Jorden</h6>
@@ -1096,7 +1021,7 @@
                                 <!-- Comment Row -->
                                 <div class="d-flex flex-row comment-row">
                                     <div class="p-2">
-                                        <img src="../assets/images/users/5.jpg" alt="user" width="50" class="rounded-circle">
+                                        <img src="~/assets/images/users/5.jpg" alt="user" width="50" class="rounded-circle">
                                     </div>
                                     <div class="comment-text w-100">
                                         <h6 class="font-medium">Johnathan Doeting</h6>
@@ -1267,12 +1192,12 @@
                                             end.multiple paragraphs and is full of waffle to pad out
                                             the comment..
                                         </p>
-                                        <img src="../assets/images/background/img4.jpg" class="img-fluid">
+                                        <img src="~/assets/images/background/img4.jpg" class="img-fluid">
                                     </div>
                                 </div>
                                 <div class="tab-pane p-20" id="profile" role="tabpanel">
                                     <div class="p-20">
-                                        <img src="../assets/images/background/img4.jpg" class="img-fluid">
+                                        <img src="~/assets/images/background/img4.jpg" class="img-fluid">
                                         <p class="mt-2">
                                             And is full of waffle to It has multiple paragraphs and
                                             is full of waffle to pad out the comment. Usually, you
@@ -1291,7 +1216,7 @@
                                             end.multiple paragraphs and is full of waffle to pad out
                                             the comment..
                                         </p>
-                                        <img src="../assets/images/background/img4.jpg" class="img-fluid">
+                                        <img src="~/assets/images/background/img4.jpg" class="img-fluid">
                                     </div>
                                 </div>
                             </div>
@@ -1301,7 +1226,7 @@
                 <!-- ============================================================== -->
                 <!-- Recent comment and chats -->
                 <!-- ============================================================== -->
-            </div>
+            </div> *@
             <!-- ============================================================== -->
             <!-- End Container fluid  -->
             <!-- ============================================================== -->
@@ -1327,28 +1252,28 @@
     <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
-    <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="~/assets/libs/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap tether Core JavaScript -->
-    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-    <script src="../assets/extra-libs/sparkline/sparkline.js"></script>
+    <script src="~/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="~/assets/extra-libs/sparkline/sparkline.js"></script>
     <!--Wave Effects -->
-    <script src="../dist/js/waves.js"></script>
+    <script src="~/dist/js/waves.js"></script>
     <!--Menu sidebar -->
-    <script src="../dist/js/sidebarmenu.js"></script>
+    <script src="~/dist/js/sidebarmenu.js"></script>
     <!--Custom JavaScript -->
-    <script src="../dist/js/custom.min.js"></script>
+    <script src="~/dist/js/custom.min.js"></script>
     <!--This page JavaScript -->
     <!-- <script src="../dist/js/pages/dashboards/dashboard1.js"></script> -->
     <!-- Charts js Files -->
-    <script src="../assets/libs/flot/excanvas.js"></script>
-    <script src="../assets/libs/flot/jquery.flot.js"></script>
-    <script src="../assets/libs/flot/jquery.flot.pie.js"></script>
-    <script src="../assets/libs/flot/jquery.flot.time.js"></script>
-    <script src="../assets/libs/flot/jquery.flot.stack.js"></script>
-    <script src="../assets/libs/flot/jquery.flot.crosshair.js"></script>
-    <script src="../assets/libs/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
-    <script src="../dist/js/pages/chart/chart-page-init.js"></script>
+    <script src="~/assets/libs/flot/excanvas.js"></script>
+    <script src="~/assets/libs/flot/jquery.flot.js"></script>
+    <script src="~/assets/libs/flot/jquery.flot.pie.js"></script>
+    <script src="~/assets/libs/flot/jquery.flot.time.js"></script>
+    <script src="~/assets/libs/flot/jquery.flot.stack.js"></script>
+    <script src="~/assets/libs/flot/jquery.flot.crosshair.js"></script>
+    <script src="~/assets/libs/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
+    <script src="~/dist/js/pages/chart/chart-page-init.js"></script>
 
 
     <div class="flotTip" style="position: absolute; left: 306px; top: 566px; display: none;"></div>

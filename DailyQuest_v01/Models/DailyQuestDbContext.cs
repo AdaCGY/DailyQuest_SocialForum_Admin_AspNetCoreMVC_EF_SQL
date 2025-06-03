@@ -55,6 +55,8 @@ public partial class DailyQuestDbContext : DbContext
 
     public virtual DbSet<MessageStatus> MessageStatuses { get; set; }
 
+    public virtual DbSet<Mission> Missions { get; set; }
+
     public virtual DbSet<Post> Posts { get; set; }
 
     public virtual DbSet<PostCategory> PostCategories { get; set; }
@@ -77,14 +79,6 @@ public partial class DailyQuestDbContext : DbContext
 
     public virtual DbSet<SubTask> SubTasks { get; set; }
 
-    public virtual DbSet<SuperAdminAccount> SuperAdminAccounts { get; set; }
-
-    public virtual DbSet<SuperAdminLoginLog> SuperAdminLoginLogs { get; set; }
-
-    public virtual DbSet<SuperAdminPermission> SuperAdminPermissions { get; set; }
-
-    public virtual DbSet<Task> Tasks { get; set; }
-
     public virtual DbSet<TaskLabel> TaskLabels { get; set; }
 
     public virtual DbSet<TaskResult> TaskResults { get; set; }
@@ -97,9 +91,15 @@ public partial class DailyQuestDbContext : DbContext
 
     public virtual DbSet<Tool> Tools { get; set; }
 
+    public virtual DbSet<User> Users { get; set; }
+
     public virtual DbSet<UserAndTaskR> UserAndTaskRs { get; set; }
 
     public virtual DbSet<UserAndTitleR> UserAndTitleRs { get; set; }
+
+    public virtual DbSet<UsersLoginLog> UsersLoginLogs { get; set; }
+
+    public virtual DbSet<UsersRole> UsersRoles { get; set; }
 
     public virtual DbSet<VirtualRole> VirtualRoles { get; set; }
 
@@ -109,12 +109,12 @@ public partial class DailyQuestDbContext : DbContext
         {
             entity.Property(e => e.AdminId).HasColumnName("AdminID");
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.MemberId).HasColumnName("MemberID");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Admins)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.Member).WithMany(p => p.Admins)
+                .HasForeignKey(d => d.MemberId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Admins_Member");
+                .HasConstraintName("FK_Admins_MemberID");
         });
 
         modelBuilder.Entity<City>(entity =>
@@ -136,9 +136,14 @@ public partial class DailyQuestDbContext : DbContext
             entity.Property(e => e.CommentId).HasColumnName("CommentID");
             entity.Property(e => e.CommentedAt).HasColumnType("datetime");
             entity.Property(e => e.CommentsContent).HasColumnType("text");
+            entity.Property(e => e.MemberId).HasColumnName("MemberID");
             entity.Property(e => e.ParentCommentId).HasColumnName("ParentCommentID");
             entity.Property(e => e.PostId).HasColumnName("PostID");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.Comments)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Comments_MemberID");
 
             entity.HasOne(d => d.ParentComment).WithMany(p => p.InverseParentComment)
                 .HasForeignKey(d => d.ParentCommentId)
@@ -148,11 +153,6 @@ public partial class DailyQuestDbContext : DbContext
                 .HasForeignKey(d => d.PostId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Comments_Posts");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Comments)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Comments_Member");
         });
 
         modelBuilder.Entity<CommentsLike>(entity =>
@@ -161,21 +161,21 @@ public partial class DailyQuestDbContext : DbContext
 
             entity.ToTable("Comments_Likes");
 
-            entity.HasIndex(e => new { e.UserId, e.CommentId }, "IX_Comments_Likes").IsUnique();
+            entity.HasIndex(e => new { e.MemberId, e.CommentId }, "IX_Comments_Likes").IsUnique();
 
             entity.Property(e => e.LikesId).HasColumnName("LikesID");
             entity.Property(e => e.CommentId).HasColumnName("CommentID");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.MemberId).HasColumnName("MemberID");
 
             entity.HasOne(d => d.Comment).WithMany(p => p.CommentsLikes)
                 .HasForeignKey(d => d.CommentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Comments_Likes_Comments");
 
-            entity.HasOne(d => d.User).WithMany(p => p.CommentsLikes)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.Member).WithMany(p => p.CommentsLikes)
+                .HasForeignKey(d => d.MemberId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Comments_Likes_Member");
+                .HasConstraintName("FK_Comments_Likes_MemberID");
         });
 
         modelBuilder.Entity<ConversationHistory>(entity =>
@@ -213,21 +213,21 @@ public partial class DailyQuestDbContext : DbContext
 
         modelBuilder.Entity<Favorite>(entity =>
         {
-            entity.HasIndex(e => new { e.UserId, e.PostId }, "IX_Favorites").IsUnique();
+            entity.HasIndex(e => new { e.MemberId, e.PostId }, "IX_Favorites").IsUnique();
 
             entity.Property(e => e.FavoriteId).HasColumnName("FavoriteID");
+            entity.Property(e => e.MemberId).HasColumnName("MemberID");
             entity.Property(e => e.PostId).HasColumnName("PostID");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.Favorites)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Favorites_MemberID");
 
             entity.HasOne(d => d.Post).WithMany(p => p.Favorites)
                 .HasForeignKey(d => d.PostId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Favorites_Posts");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Favorites)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Favorites_Member");
         });
 
         modelBuilder.Entity<FriendRequestStatus>(entity =>
@@ -542,25 +542,62 @@ public partial class DailyQuestDbContext : DbContext
                 .HasColumnName("status_name");
         });
 
+        modelBuilder.Entity<Mission>(entity =>
+        {
+            entity.HasKey(e => e.TaskId).HasName("PK_Task");
+
+            entity.ToTable("Mission");
+
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.ExpectDate).HasColumnType("datetime");
+            entity.Property(e => e.FinishDate).HasColumnType("datetime");
+            entity.Property(e => e.SetPeriod).HasMaxLength(50);
+            entity.Property(e => e.TaskContent).HasMaxLength(50);
+
+            entity.HasOne(d => d.SubTask).WithMany(p => p.Missions)
+                .HasForeignKey(d => d.SubTaskId)
+                .HasConstraintName("FK_Task_SubTask");
+
+            entity.HasOne(d => d.TaskLabel).WithMany(p => p.Missions)
+                .HasForeignKey(d => d.TaskLabelId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Task_TaskLabel");
+
+            entity.HasOne(d => d.TaskResult).WithMany(p => p.Missions)
+                .HasForeignKey(d => d.TaskResultId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Task_TaskResult");
+
+            entity.HasOne(d => d.TaskType).WithMany(p => p.Missions)
+                .HasForeignKey(d => d.TaskTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Task_TaskType");
+
+            entity.HasOne(d => d.Tool).WithMany(p => p.Missions)
+                .HasForeignKey(d => d.ToolId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Task_Tool");
+        });
+
         modelBuilder.Entity<Post>(entity =>
         {
             entity.Property(e => e.PostId).HasColumnName("PostID");
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.MemberId).HasColumnName("MemberID");
             entity.Property(e => e.PostImage).HasColumnType("image");
             entity.Property(e => e.PostsContent).HasColumnType("text");
             entity.Property(e => e.Title).HasMaxLength(50);
-            entity.Property(e => e.UserId).HasColumnName("UserID");
 
             entity.HasOne(d => d.Category).WithMany(p => p.Posts)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Posts_PostCategories");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Posts)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.Member).WithMany(p => p.Posts)
+                .HasForeignKey(d => d.MemberId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Posts_Member");
+                .HasConstraintName("FK_Posts_MemberID");
         });
 
         modelBuilder.Entity<PostCategory>(entity =>
@@ -579,21 +616,21 @@ public partial class DailyQuestDbContext : DbContext
 
             entity.ToTable("Posts_Likes");
 
-            entity.HasIndex(e => new { e.UserId, e.PostId }, "IX_Posts_Likes").IsUnique();
+            entity.HasIndex(e => new { e.MemberId, e.PostId }, "IX_Posts_Likes").IsUnique();
 
             entity.Property(e => e.LikesId).HasColumnName("LikesID");
+            entity.Property(e => e.MemberId).HasColumnName("MemberID");
             entity.Property(e => e.PostId).HasColumnName("PostID");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.PostsLikes)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Posts_Likes_MemberID");
 
             entity.HasOne(d => d.Post).WithMany(p => p.PostsLikes)
                 .HasForeignKey(d => d.PostId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Posts_Likes_Posts");
-
-            entity.HasOne(d => d.User).WithMany(p => p.PostsLikes)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Posts_Likes_Member");
         });
 
         modelBuilder.Entity<Report>(entity =>
@@ -601,17 +638,24 @@ public partial class DailyQuestDbContext : DbContext
             entity.Property(e => e.ReportId).HasColumnName("ReportID");
             entity.Property(e => e.AdminComment).HasColumnType("text");
             entity.Property(e => e.AdminId).HasColumnName("AdminID");
+            entity.Property(e => e.MemberId).HasColumnName("MemberID");
             entity.Property(e => e.PostId).HasColumnName("PostID");
             entity.Property(e => e.ProcessedAt).HasColumnType("datetime");
             entity.Property(e => e.ReportCategoryId).HasColumnName("ReportCategoryID");
             entity.Property(e => e.ReportContent).HasColumnType("text");
             entity.Property(e => e.ReportedAt).HasColumnType("datetime");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .HasDefaultValue("Pending");
 
             entity.HasOne(d => d.Admin).WithMany(p => p.Reports)
                 .HasForeignKey(d => d.AdminId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Reports_Admins");
+
+            entity.HasOne(d => d.Member).WithMany(p => p.Reports)
+                .HasForeignKey(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reports_MemberID");
 
             entity.HasOne(d => d.Post).WithMany(p => p.Reports)
                 .HasForeignKey(d => d.PostId)
@@ -622,11 +666,6 @@ public partial class DailyQuestDbContext : DbContext
                 .HasForeignKey(d => d.ReportCategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Reports_ReportCategories");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Reports)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Reports_Member");
         });
 
         modelBuilder.Entity<ReportCategory>(entity =>
@@ -733,120 +772,6 @@ public partial class DailyQuestDbContext : DbContext
                 .HasConstraintName("FK_SubTask_Task");
         });
 
-        modelBuilder.Entity<SuperAdminAccount>(entity =>
-        {
-            entity.HasKey(e => e.SuperAdminId).HasName("PK__SuperAdm__9D74425202ED6513");
-
-            entity.ToTable("SuperAdminAccount");
-
-            entity.HasIndex(e => e.Email, "UQ__SuperAdm__AB6E61646564B9E9").IsUnique();
-
-            entity.HasIndex(e => e.Username, "UQ__SuperAdm__F3DBC572F9148E39").IsUnique();
-
-            entity.Property(e => e.SuperAdminId).HasColumnName("SuperAdmin_id");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("created_at");
-            entity.Property(e => e.Email)
-                .HasMaxLength(100)
-                .HasColumnName("email");
-            entity.Property(e => e.Is2Faenabled).HasColumnName("Is2FAEnabled");
-            entity.Property(e => e.LastLoginTime)
-                .HasColumnType("datetime")
-                .HasColumnName("last_login_time");
-            entity.Property(e => e.PasswordHash)
-                .HasMaxLength(255)
-                .HasColumnName("password_hash");
-            entity.Property(e => e.PasswordSalt)
-                .HasMaxLength(255)
-                .HasColumnName("password_salt");
-            entity.Property(e => e.PermissionId).HasColumnName("permission_id");
-            entity.Property(e => e.Username)
-                .HasMaxLength(100)
-                .HasColumnName("username");
-
-            entity.HasOne(d => d.Permission).WithMany(p => p.SuperAdminAccounts)
-                .HasForeignKey(d => d.PermissionId)
-                .HasConstraintName("FK_SuperAdminAccount_SuperAdminPermission");
-        });
-
-        modelBuilder.Entity<SuperAdminLoginLog>(entity =>
-        {
-            entity.HasKey(e => e.LoginId).HasName("PK__SuperAdm__C2C971DBF3E3A1AF");
-
-            entity.ToTable("SuperAdminLoginLog");
-
-            entity.Property(e => e.LoginId).HasColumnName("login_id");
-            entity.Property(e => e.IpAddress)
-                .HasMaxLength(50)
-                .HasColumnName("ip_address");
-            entity.Property(e => e.LoginTime)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("login_time");
-            entity.Property(e => e.LogoutTime)
-                .HasColumnType("datetime")
-                .HasColumnName("logout_time");
-            entity.Property(e => e.SuperAdminId).HasColumnName("SuperAdmin_id");
-
-            entity.HasOne(d => d.SuperAdmin).WithMany(p => p.SuperAdminLoginLogs)
-                .HasForeignKey(d => d.SuperAdminId)
-                .HasConstraintName("FK__SuperAdmi__Super__6D0D32F4");
-        });
-
-        modelBuilder.Entity<SuperAdminPermission>(entity =>
-        {
-            entity.HasKey(e => e.PermissionId).HasName("PK__SuperAdm__E5331AFA7AA53FF5");
-
-            entity.ToTable("SuperAdminPermission");
-
-            entity.HasIndex(e => e.PermissionName, "UQ__SuperAdm__81C0F5A2004C3587").IsUnique();
-
-            entity.Property(e => e.PermissionId).HasColumnName("permission_id");
-            entity.Property(e => e.PermissionDescription)
-                .HasColumnType("text")
-                .HasColumnName("permission_description");
-            entity.Property(e => e.PermissionName)
-                .HasMaxLength(100)
-                .HasColumnName("permission_name");
-        });
-
-        modelBuilder.Entity<Task>(entity =>
-        {
-            entity.ToTable("Task");
-
-            entity.Property(e => e.CreateDate).HasColumnType("datetime");
-            entity.Property(e => e.ExpectDate).HasColumnType("datetime");
-            entity.Property(e => e.FinishDate).HasColumnType("datetime");
-            entity.Property(e => e.SetPeriod).HasMaxLength(50);
-            entity.Property(e => e.TaskContent).HasMaxLength(50);
-
-            entity.HasOne(d => d.SubTask).WithMany(p => p.Tasks)
-                .HasForeignKey(d => d.SubTaskId)
-                .HasConstraintName("FK_Task_SubTask");
-
-            entity.HasOne(d => d.TaskLabel).WithMany(p => p.Tasks)
-                .HasForeignKey(d => d.TaskLabelId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Task_TaskLabel");
-
-            entity.HasOne(d => d.TaskResult).WithMany(p => p.Tasks)
-                .HasForeignKey(d => d.TaskResultId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Task_TaskResult");
-
-            entity.HasOne(d => d.TaskType).WithMany(p => p.Tasks)
-                .HasForeignKey(d => d.TaskTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Task_TaskType");
-
-            entity.HasOne(d => d.Tool).WithMany(p => p.Tasks)
-                .HasForeignKey(d => d.ToolId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Task_Tool");
-        });
-
         modelBuilder.Entity<TaskLabel>(entity =>
         {
             entity.ToTable("TaskLabel");
@@ -906,14 +831,71 @@ public partial class DailyQuestDbContext : DbContext
             entity.Property(e => e.ToolPhoto).HasColumnType("image");
         });
 
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("PK__SuperAdm__9D74425202ED6513");
+
+            entity.HasIndex(e => e.Email, "UQ__SuperAdm__AB6E61646564B9E9").IsUnique();
+
+            entity.HasIndex(e => e.Username, "UQ__SuperAdm__F3DBC572F9148E39").IsUnique();
+
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .HasColumnName("email");
+            entity.Property(e => e.Is2Faenabled).HasColumnName("Is2FAEnabled");
+            entity.Property(e => e.LastLoginTime)
+                .HasColumnType("datetime")
+                .HasColumnName("last_login_time");
+            entity.Property(e => e.PasswordHash)
+                .HasMaxLength(255)
+                .HasColumnName("password_hash");
+            entity.Property(e => e.PasswordSalt)
+                .HasMaxLength(255)
+                .HasColumnName("password_salt");
+            entity.Property(e => e.Username)
+                .HasMaxLength(100)
+                .HasColumnName("username");
+
+            entity.HasMany(d => d.Permissions).WithMany(p => p.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "RoleUserRel",
+                    r => r.HasOne<UsersRole>().WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__Role_User__permi__7B264821"),
+                    l => l.HasOne<User>().WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__Role_User__UserI__7A3223E8"),
+                    j =>
+                    {
+                        j.HasKey("UserId", "PermissionId").HasName("PK__Role_Use__A9DBFD032B108EC4");
+                        j.ToTable("Role_User_Rel");
+                        j.IndexerProperty<int>("UserId").HasColumnName("UserID");
+                        j.IndexerProperty<int>("PermissionId").HasColumnName("permission_id");
+                    });
+        });
+
         modelBuilder.Entity<UserAndTaskR>(entity =>
         {
-            entity.HasKey(e => e.UserId);
+            entity.HasKey(e => e.MemberId);
 
             entity.ToTable("UserAndTaskRS");
 
-            entity.Property(e => e.UserId).ValueGeneratedNever();
+            entity.Property(e => e.MemberId)
+                .ValueGeneratedNever()
+                .HasColumnName("MemberID");
             entity.Property(e => e.EndDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Member).WithOne(p => p.UserAndTaskR)
+                .HasForeignKey<UserAndTaskR>(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserAndTaskRS_MemberID_Users");
 
             entity.HasOne(d => d.Task).WithMany(p => p.UserAndTaskRs)
                 .HasForeignKey(d => d.TaskId)
@@ -924,31 +906,67 @@ public partial class DailyQuestDbContext : DbContext
                 .HasForeignKey(d => d.TaskResultId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UserAndTaskRS_TaskResult");
-
-            entity.HasOne(d => d.User).WithOne(p => p.UserAndTaskR)
-                .HasForeignKey<UserAndTaskR>(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserAndTaskRS_Member");
         });
 
         modelBuilder.Entity<UserAndTitleR>(entity =>
         {
-            entity.HasKey(e => e.UserId);
+            entity.HasKey(e => e.MemberId);
 
             entity.ToTable("UserAndTitleRS");
 
-            entity.Property(e => e.UserId).ValueGeneratedNever();
+            entity.Property(e => e.MemberId)
+                .ValueGeneratedNever()
+                .HasColumnName("MemberID");
             entity.Property(e => e.FinishDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Member).WithOne(p => p.UserAndTitleR)
+                .HasForeignKey<UserAndTitleR>(d => d.MemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserAndTitleRS_MemberID_Users");
 
             entity.HasOne(d => d.Title).WithMany(p => p.UserAndTitleRs)
                 .HasForeignKey(d => d.TitleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UserAndTitleRS_Title");
+        });
 
-            entity.HasOne(d => d.User).WithOne(p => p.UserAndTitleR)
-                .HasForeignKey<UserAndTitleR>(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserAndTitleRS_Member");
+        modelBuilder.Entity<UsersLoginLog>(entity =>
+        {
+            entity.HasKey(e => e.LoginId).HasName("PK__SuperAdm__C2C971DBF3E3A1AF");
+
+            entity.ToTable("UsersLoginLog");
+
+            entity.Property(e => e.LoginId).HasColumnName("login_id");
+            entity.Property(e => e.IpAddress)
+                .HasMaxLength(50)
+                .HasColumnName("ip_address");
+            entity.Property(e => e.LoginTime)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("login_time");
+            entity.Property(e => e.LogoutTime)
+                .HasColumnType("datetime")
+                .HasColumnName("logout_time");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UsersLoginLogs)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK__SuperAdmi__Super__6D0D32F4");
+        });
+
+        modelBuilder.Entity<UsersRole>(entity =>
+        {
+            entity.HasKey(e => e.PermissionId).HasName("PK__SuperAdm__E5331AFA7AA53FF5");
+
+            entity.HasIndex(e => e.PermissionName, "UQ__SuperAdm__81C0F5A2004C3587").IsUnique();
+
+            entity.Property(e => e.PermissionId).HasColumnName("permission_id");
+            entity.Property(e => e.PermissionDescription)
+                .HasColumnType("text")
+                .HasColumnName("permission_description");
+            entity.Property(e => e.PermissionName)
+                .HasMaxLength(100)
+                .HasColumnName("permission_name");
         });
 
         modelBuilder.Entity<VirtualRole>(entity =>
