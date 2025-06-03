@@ -7,11 +7,11 @@ public partial class Admin
 {
     public int AdminId { get; set; }
 
-    public int UserId { get; set; }
+    public int MemberId { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
-    public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
+    public virtual Member Member { get; set; } = null!;
 
-    public virtual Member User { get; set; } = null!;
+    public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 }

@@ -13,7 +13,7 @@ public partial class Post
 
     public DateTime CreatedAt { get; set; }
 
-    public int UserId { get; set; }
+    public int MemberId { get; set; }
 
     public string PostsContent { get; set; } = null!;
 
@@ -25,9 +25,9 @@ public partial class Post
 
     public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 
+    public virtual Member Member { get; set; } = null!;
+
     public virtual ICollection<PostsLike> PostsLikes { get; set; } = new List<PostsLike>();
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
-
-    public virtual Member User { get; set; } = null!;
 }
