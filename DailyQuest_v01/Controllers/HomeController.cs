@@ -7,14 +7,18 @@ namespace DailyQuest_v01.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly DailyQuestDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, DailyQuestDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
+            //var products = _context.VirtualRoles.Where(p => p.RoleId == 1);
+            //return View(products);
             return View();
         }
 
