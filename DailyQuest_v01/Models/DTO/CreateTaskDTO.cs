@@ -12,7 +12,7 @@ namespace DailyQuest_v01.Models.ViewModel
         [Display(Name = "任務標籤")]
         public string? TaskLabelName { get; set; } = null!;
         [Required(ErrorMessage = "任務內容必填")]
-        [StringLength(15)]
+        [StringLength(10, ErrorMessage = "內容不可超過10個字")]
         [Display(Name = "任務內容")]
         public string? TaskContent { get; set; } = null!;
         [Required(ErrorMessage = "設定完成日必填")]

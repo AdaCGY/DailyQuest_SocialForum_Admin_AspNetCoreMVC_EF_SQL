@@ -38,8 +38,6 @@
         </ul>
     </nav>
 </div>
-
-
 <!--用於新增任務的彈跳出介面-->
 <div class="modal fade" id="createTaskModel" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -81,11 +79,11 @@
                         <div class="col-sm-10">
                             @foreach (var item in ViewBag.setperiod)
                             {
-                                <input class="form-check-input" id="@item" name="setperiod" type="radio" value="@item">
-                                <label class="form-check-label" name="setperiod">@item</label>
+                                <input class="form-check-input" id="@item" name="SetPeriod" type="radio" value="@item" data-val="true" data-val-required="週期設定必填">
+                                <label class="form-check-label" for="@item">@item</label>
                             }
+                            <span class="text-danger" data-valmsg-for="SetPeriod" data-valmsg-replace="true"></span>
                         </div>
-                        <span asp-validation-for="SetPeriod" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -221,7 +219,6 @@
         }
         //放大鏡(修改)button_彈出介面
         const replacebtn = (async (taskid) => {
-            console.log(formatDate("2025-06-01T00:00:00"));
             const myModal = new bootstrap.Modal(document.getElementById('replaceTaskModel'));
             //抓取目前選取的資料內容
             const response = await fetch(`@Url.Content("~/Mission/GetSingleTask")?singletaskid=${taskid}`);
@@ -243,7 +240,7 @@
             const getsetperiod = await setperiodresponse.json();
             const setperiodoptions = getsetperiod.map(opt => {
                 const checked = opt == datas.setPeriod ? 'checked' : '';
-                return `<input class="form-check-input" id="SetPeriod_${opt}" name="SetPeriod" type="radio" value="${opt}" ${checked}>
+                return `<input class="form-check-input" id="SetPeriod_${opt}" name="SetPeriod" type="radio" value="${opt}" data-val="true" data-val-required="週期設定必填" ${checked}>
                 <label for="SetPeriod_${opt}" class="form-check-label" name="SetPeriod">${opt}</label>`;
             }).join('');
             const rtresponse = await fetch(`@Url.Content("~/Mission/GetResultName")`)
@@ -274,21 +271,24 @@
                 <div class="mb-3 row">
                     <label for="TaskContent" class="col-sm-2 col-form-label">任務內容</label>
                     <div class="col-sm-10">
-                        <input class="form-control" name="TaskContent" value="${datas.taskContent}"/>
-                        <span asp-validation-for="TaskContent" class="text-danger"></span>
+                        <input class="form-control" name="TaskContent" value="${datas.taskContent}" 
+                        data-val="true" data-val-required="任務內容必填"/>
+                        <span class="text-danger" data-valmsg-for="TaskContent" data-valmsg-replace="true"></span>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="ExpectDate" class="col-sm-2 col-form-label">設定完成日</label>
                     <div class="col-sm-10">
-                        <input id="ExpectDate" class="form-control" name="ExpectDate" type="date" value="${formatDate(datas.expectDate)}">
-                        <span asp-validation-for="ExpectDate" class="text-danger"></span>
+                        <input id="ExpectDate" class="form-control" name="ExpectDate" type="date" value="${formatDate(datas.expectDate)}"
+                        data-val="true" data-val-required="設定完成日必填">
+                        <span class="text-danger" data-valmsg-for="ExpectDate" data-valmsg-replace="true"></span>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="SetPeriod" class="col-sm-2 col-form-label">週期設定</label>
                     <div class="col-sm-10">
                         ${setperiodoptions}
+                        <span class="text-danger" data-valmsg-for="SetPeriod" data-valmsg-replace="true"></span>
                     </div>
                     <span asp-validation-for="SetPeriod" class="text-danger"></span>
                 </div>
@@ -301,6 +301,7 @@
                 </div>
             `;
             document.querySelector('#replacetaskform .modal-body').innerHTML = htmlData;
+            $.validator.unobtrusive.parse('#replacetaskform');
             myModal.show();
             return datas;
         });
