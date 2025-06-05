@@ -18,14 +18,54 @@
     <table class="table table-hover text-nowrap align-middle">
         <thead class="table-light text-center">
             <tr>
-                <th></th>
-                <th>@Html.DisplayNameFor(model => model.TaskTypeName)</th>
-                <th>@Html.DisplayNameFor(model => model.TaskLabelName)</th>
-                <th>@Html.DisplayNameFor(model => model.TaskContent)</th>
-                <th>@Html.DisplayNameFor(model => model.ExpectDate)</th>
-                <th>@Html.DisplayNameFor(model => model.SetPeriod)</th>
-                <th>@Html.DisplayNameFor(model => model.CreateDate)</th>
-                <th>@Html.DisplayNameFor(model => model.TaskResultName)</th>
+                <th class="align-middle"><button type="button" class="btn btn-outline-dark" onclick="initFrontpage()"><i class="fa-solid fa-arrows-rotate"></i></button></th>
+                <th class="align-middle">
+                    <button class="btn btn-transparent dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        @Html.DisplayNameFor(model => model.TaskTypeName)
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        @foreach (var item in ViewBag.tasktypename)
+                        {
+                            <li><a class="dropdown-item" data-content="@item.Value" data-colname="TaskTypeName">@item.Text</a></li>
+                        }
+                    </ul>
+                </th>
+                <th class="align-middle">
+                    <button class="btn btn-transparent dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        @Html.DisplayNameFor(model => model.TaskLabelName)
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        @foreach (var item in ViewBag.tasklabelname)
+                        {
+                            <li><a class="dropdown-item" data-content="@item.Value" data-colname="TaskLabelName">@item.Text</a></li>
+                        }
+                    </ul>
+                </th>
+                <th class="align-middle">@Html.DisplayNameFor(model => model.TaskContent)</th>
+                <th class="align-middle">@Html.DisplayNameFor(model => model.ExpectDate)</th>
+                <th class="align-middle">
+                    <button class="btn btn-transparent dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        @Html.DisplayNameFor(model => model.SetPeriod)
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        @foreach (var item in ViewBag.setperiod)
+                        {
+                            <li><a class="dropdown-item" data-content="@item" data-colname="SetPeriod">@item</a></li>
+                        }
+                    </ul>
+                </th>
+                <th class="align-middle">@Html.DisplayNameFor(model => model.CreateDate)</th>
+                <th class="align-middle">
+                    <button class="btn btn-transparent dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        @Html.DisplayNameFor(model => model.TaskResultName)
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        @foreach (var item in ViewBag.resultname)
+                        {
+                            <li><a class="dropdown-item" data-content="@item.Value" data-colname="TaskResultName">@item.Text</a></li>
+                        }
+                    </ul>
+                </th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -156,11 +196,9 @@
         let currentpage = 1;
         let pagesize = 5;
         let totalpages = 1;
-        //分頁介面IIFE
-        (async () => {
-            const tasksresponse = await fetch(`@Url.Content("~/Mission/GetAllTasks")`);
-            const tasksdatas = await tasksresponse.json();
-            const totaltaskscount = tasksdatas.length;
+        let currentTasks = [];
+        //產生分頁按鈕
+        const generatePagination = (totaltaskscount) => {
             totalpages = Math.ceil(totaltaskscount / pagesize);
             let pagetab = '';
             for (var i = 1; i <= totalpages; i++){
@@ -180,11 +218,17 @@
                 </li>
             `;
             document.getElementById('pagination').innerHTML = htmlData;
-        })();
-        //分頁_顯示目前資料庫第X頁所有存在的任務
+        }
+        //顯示任務表格的資料
         const pagefunction = async (userpage) => {
             currentpage = userpage;
-            const response = await fetch(`@Url.Content("~/Mission/Pagination")?currentpage=${currentpage}`);
+            const response = await fetch(`@Url.Content("~/Mission/Pagination")`, {
+               method:'POST',
+               headers:{'content-Type': 'application/json'},
+               body: JSON.stringify({
+                   AllTasks: currentTasks, CurrentPage: currentpage
+               })
+            });
             const datas = await response.json();
             const htmlData = datas.map(task => {
                 const {taskId, taskTypeName, taskLabelName, taskContent, expectDate, setPeriod, createDate, taskResultName} = task
@@ -206,7 +250,6 @@
             });
             document.querySelector('tbody').innerHTML = htmlData.join('');
         }
-        pagefunction(currentpage);
         //分頁功能_上一頁
         const previouspage = () => {
             currentpage = currentpage - 1 == 0 ? 1 : currentpage - 1;
@@ -217,6 +260,31 @@
             currentpage = currentpage + 1 > totalpages? totalpages : currentpage + 1;
             pagefunction(currentpage);
         }
+        //功能類型篩選
+        const selectcontent = async (colname, content) => {
+            currentpage = 1;
+            const response = await fetch(`@Url.Content("~/Mission/Choice")?colname=${colname}&content=${content}`);
+            const datas = await response.json();
+            currentTasks = datas;
+            generatePagination(currentTasks.length);
+            pagefunction(currentpage);
+        };
+        //初始化首頁介面
+        const initFrontpage = async () => {
+            const tasksresponse = await fetch(`@Url.Content("~/Mission/GetAllTasks")`);
+            const tasksdatas = await tasksresponse.json();
+            currentTasks = tasksdatas;
+            generatePagination(currentTasks.length);
+            pagefunction(1);
+        };
+        initFrontpage();
+        //篩選連接功能
+        document.querySelectorAll('a.dropdown-item').forEach(link => {
+            link.addEventListener('click', event => {
+                event.preventDefault();
+                selectcontent(event.target.dataset.colname, event.target.dataset.content);
+            })
+        });
         //放大鏡(修改)button_彈出介面
         const replacebtn = (async (taskid) => {
             const myModal = new bootstrap.Modal(document.getElementById('replaceTaskModel'));
@@ -328,35 +396,19 @@
             if (event.key == 'Enter' && inputsearch.value != ""){
                 const searchresponse = await fetch(`@Url.Content("/mission/SearchKeyword")?keyword=${inputsearch.value}`);
                 const datas = await searchresponse.json();
+                currentTasks = datas;
                 if (datas.length == 0 && inputsearch.value != ""){
                     document.querySelector('tbody').innerHTML = `<tr><td colspan="${columnCount}" class="fs-3 fw-bolder text-center">找不到任何符合的資料</td></tr>`;
                 }
                 else{
-                    const htmlData = datas.map(select => {
-                        const {taskId, taskTypeName, taskLabelName, taskContent, expectDate, setPeriod, createDate, taskResultName} = select
-                        return `
-                        <tr>
-                        <td>
-                            <button id="replacetask${taskId}" onclick="replacebtn(${taskId})" value="${taskId}"><i class="fa-solid fa-magnifying-glass" style="margin:2px"></i></button>
-                            <button id="deletetask${taskId}" onclick="deletebtn(${taskId})"><i class="fa-solid fa-trash-can" style="margin:2px"></i></button>
-                        </td>
-                        <td class="text-center">${taskTypeName}</td>
-                        <td class="text-center">${taskLabelName}</td>
-                        <td class="text-center">${taskContent}</td>
-                        <td class="text-center">${formatDate(expectDate)}</td>
-                        <td class="text-center">${setPeriod}</td>
-                        <td class="text-center">${formatDate(createDate)}</td>
-                        <td class="text-center">${taskResultName}</td>
-                        </tr>
-                        `
-                    });
-                    document.querySelector('tbody').innerHTML = htmlData.join('');
+                    generatePagination(currentTasks.length);
+                    pagefunction(currentpage);
                 }
             }
             else{
-                pagefunction(currentpage);
+                initFrontpage();
             }
-        });
+        });  
     </script>
 }
 

@@ -1,4 +1,5 @@
 ﻿using DailyQuest_v01.Models;
+using DailyQuest_v01.Models.DTO;
 using DailyQuest_v01.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,6 +9,7 @@ using NuGet.Protocol;
 using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DailyQuest_v01.Controllers
 {
@@ -35,6 +37,11 @@ namespace DailyQuest_v01.Controllers
                 new SelectListItem { Text = "其他", Value = "其他" },
             };
             ViewBag.setperiod = GetSetPeriodContent();
+            ViewBag.resultname = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "待完成", Value = "待完成" },
+                new SelectListItem { Text = "完成", Value = "完成" },
+            }; ;
             return View();
         }
         [HttpPost]
@@ -151,6 +158,7 @@ namespace DailyQuest_v01.Controllers
         public List<string> GetSetPeriodContent() {
             return new List<string>() { "不定期", "每日", "每月"};
         }
+        //搜尋關鍵字
         public async Task<IActionResult> SearchKeyword(string keyword) {
             var eachtask = await _db.Missions.Include(t => t.TaskType).Include(t => t.TaskLabel).Include(t => t.TaskResult).ToListAsync();
             var model = eachtask.Where(s => s.TaskContent.Contains(keyword) && s.TaskContent != null)
@@ -168,10 +176,30 @@ namespace DailyQuest_v01.Controllers
             if (model == null) { return Json("找不到符合的資料"); }
             else { return Json(model); }
         }
-        public async Task<IActionResult> Pagination(int currentpage) {
+        //放入資料而製成分頁
+        [HttpPost]
+        public IActionResult Pagination([FromBody] PaginationDTO updatetasks) {
             int pagesize = 5;
-            var origintasks = await _db.Missions.Include(t => t.TaskType).Include(t => t.TaskLabel).Include(t => t.TaskResult).ToListAsync();
-            var onepagetasks = origintasks.Select(task => new CreateTaskDTO {
+            var onepagetasks = updatetasks.AllTasks.Skip((updatetasks.CurrentPage - 1) * pagesize).Take(pagesize);
+            return Json(onepagetasks);
+        }
+        //各項欄位篩選資料
+        public async Task<IActionResult> Choice(string colname, string content) {
+            var eachtask = await _db.Missions.Include(t => t.TaskType).Include(t => t.TaskLabel).Include(t => t.TaskResult).ToListAsync();
+            if (colname == "TaskTypeName") {
+                eachtask = eachtask.Where(s => s.TaskType.TaskTypeName == content).ToList();
+            }
+            else if (colname == "TaskLabelName") {
+                eachtask = eachtask.Where(s => s.TaskLabel.TaskLabelName == content).ToList();
+            }
+            else if (colname == "SetPeriod") {
+                eachtask = eachtask.Where(s => s.SetPeriod == content).ToList();
+            }
+            else {
+                eachtask = eachtask.Where(s => s.TaskResult.TaskResultName == content).ToList();
+            }
+            var model = eachtask.Select(task => new CreateTaskDTO
+            {
                 TaskId = task.TaskId,
                 TaskTypeName = task.TaskType.TaskTypeName,
                 TaskLabelName = task.TaskLabel.TaskLabelName,
@@ -180,8 +208,8 @@ namespace DailyQuest_v01.Controllers
                 SetPeriod = task.SetPeriod,
                 CreateDate = task.CreateDate,
                 TaskResultName = task.TaskResult.TaskResultName
-            }).ToList().Skip((currentpage - 1) * pagesize).Take(pagesize);
-            return Json(onepagetasks);
+            }).ToList();
+            return Json(model);
         }
     }
 }
