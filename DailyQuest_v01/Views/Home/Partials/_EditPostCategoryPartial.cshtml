@@ -25,36 +25,8 @@
         <div class="border-top">
             <div class="card-body">
                 <button type="submit" class="btn btn-primary">儲存</button>
-                <button class="cancel-edit btn btn-secondary">取消</button>
+                <button class="btn btn-secondary" id="cancel">取消</button>
             </div>
         </div>
     </form>
 </div>
-
-<script>
-    $(document).ready(function(){
-        $('#editPostCategoryForm').on('submit',function(e){
-            e.preventDefault();
-
-            $.ajax({
-                url:'@Url.Action("EditPostCategory", "Home")',
-                type:'POST',
-                data: $(this).serialize(),
-                success: function(res){
-                    if(res.success){
-                        alert(res.message);
-                        loadCategoriesPartial(); // 成功後重新載入列表
-                    } 
-                    else {
-                        alert(res.message);
-                        }
-                }
-            });
-        });
-    });
-    $(document).on('click', '.cancel-edit', function (e) {
-            e.preventDefault();
-            loadCategoriesPartial();
-                });
-</script>
-

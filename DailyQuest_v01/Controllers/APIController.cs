@@ -23,13 +23,13 @@ namespace DailyQuest_v01.Controllers
 
             if (postCategory == null)
             {
-                return NotFound(new { success = false, message = "找不到資料" });
+                return new JsonResult(new { success = false, message = "找不到資料" });
             }
 
             _context.PostCategories.Remove(postCategory);
             await _context.SaveChangesAsync();
 
-            return Ok(new { success = true, message = "刪除成功" });
+            return new JsonResult(new { success = true, message = "刪除成功" });
         }
 
         [HttpDelete("{id}")]
@@ -39,13 +39,13 @@ namespace DailyQuest_v01.Controllers
 
             if (reportCategory == null)
             {
-                return NotFound(new { success = false, message = "找不到資料" });
+                return new JsonResult(new { success = false, message = "找不到資料" });
             }
 
             _context.ReportCategories.Remove(reportCategory);
             await _context.SaveChangesAsync();
 
-            return Ok(new { success = true, message = "刪除成功" });
+            return new JsonResult(new { success = true, message = "刪除成功" });
         }
     }
 }

@@ -100,7 +100,7 @@ namespace DailyQuest_v01.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateReportCategory([FromBody] ReportCategory reportCategory)
+        public async Task<IActionResult> CreateReportCategory(ReportCategory reportCategory)
         {
             reportCategory.CreatedAt = DateTime.Now;
             if (ModelState.IsValid)

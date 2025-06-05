@@ -7,14 +7,9 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" style="background-color: transparent; font-size: 1.1rem;">
                         <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="SocialIndex"
-                               class="text-secondary text-decoration-none">
-                                社交論壇管理
-                            </a>
+                            <a asp-controller="Home" asp-action="SocialIndex" class="text-secondary text-decoration-none">社交論壇管理</a>
                         </li>
-                        <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">
-                            類別管理
-                        </li>
+                        <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">類別管理</li>
                     </ol>
                 </nav>
             </div>
@@ -29,8 +24,8 @@
             <table class="table table-striped table-bordered">
                 <thead class="thead-light">
                     <tr>
-                        <th>@Html.DisplayNameFor(model => model.PostCategories.First().CategoryId)</th>
-                        <th>@Html.DisplayNameFor(model => model.PostCategories.First().CategoryName)</th>
+                        <th>代碼</th>
+                        <th>類別名稱</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -59,10 +54,10 @@
             <table class="table table-striped table-bordered">
                 <thead class="thead-light">
                     <tr>
-                        <th>@Html.DisplayNameFor(model => model.ReportCategories.First().ReportCategoryId)</th>
-                        <th>@Html.DisplayNameFor(model => model.ReportCategories.First().ReportCategoryName)</th>
-                        <th>@Html.DisplayNameFor(model => model.ReportCategories.First().Description)</th>
-                        <th>@Html.DisplayNameFor(model => model.ReportCategories.First().CreatedAt)</th>
+                        <th>代碼</th>
+                        <th>檢舉項目</th>
+                        <th>項目補充說明</th>
+                        <th>創建日期</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -86,7 +81,9 @@
         </div>
     </div>
 </div>
+
 <!-- Modal 彈出視窗 -->
+<!--新增檢舉類別-->
 <div class="modal fade" id="createReportCategoryModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -104,122 +101,14 @@
                         <label for="description" class="form-label">說明</label>
                         <input type="text" class="form-control" id="description" name="description">
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="cancel">取消</button>
+                        <button type="submit" class="btn btn-primary">送出</button>
+                    </div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="cancel-createReportCategories btn btn-secondary">取消</button>
-                <button type="button" class="btn btn-primary" id="submitCreateReportCategory">送出</button>
             </div>
         </div>
     </div>
 </div>
 
-
-<script>
-    $(document).on('click', '.btn-delete-post', function () {
-    const id = $(this).data('id');
-         if (!confirm("你確定要刪除這個分類嗎？")) return;
-
-        $.ajax({
-                url: "https://localhost:7131/API/DeletePostCategory/"+id,
-            type: 'DELETE',
-            success: function (data) {
-                if (data.success) {
-                    $(`#row-${id}`).remove();
-                    alert("貼文類別刪除成功！編號為 "+id);
-                } else {
-                    alert(data.message || "刪除失敗");
-                }
-            },
-            
-        });
-    });
-
-    $(document).on('click', '.btn-delete-report', function () {
-        const id = $(this).data('id');
-             if (!confirm("你確定要刪除這個檢舉項目嗎？")) return;
-            $.ajax({
-                        url: "https://localhost:7131/API/DeleteReportCategory/"+id,
-                type: 'DELETE',
-                success: function (data) {
-                    if (data.success) {
-                        $(`#row-${id}`).remove();
-                        alert("檢舉類別項目刪除成功！編號為 "+id);
-                    } else {
-                        alert(data.message || "刪除失敗");
-                    }
-                },
-                
-            });
-        });
-
-    $(document).on('click', '.load-create-post-category', function (e) {
-           e.preventDefault();
-
-           $.get('@Url.Action("CreatePostCategory", "Home")', function (result) {
-                // 隱藏原本的整頁內容
-                $('#page-body-container').hide();
-
-                // 僅做右側內容更新
-                $('#content-area').html(result).fadeIn();
-             });
-          });
-
-    $(document).on('click', '.load-edit-post-category', function (e) {
-           e.preventDefault();
-           const id = $(this).attr('id');
-
-           $.get('@Url.Action("EditPostCategory", "Home")'+'/'+id, function (result) {
-                // 隱藏原本的整頁內容
-                $('#page-body-container').hide();
-
-                // 僅做右側內容更新
-                $('#content-area').html(result).fadeIn();
-           });
-    });
-
-     $(document).on('click', '.load-edit-report-category', function (e) {
-          e.preventDefault();
-         const id = $(this).attr('id');
-
-         $.get('@Url.Action("EditReportCategory", "Home")' + '/' + id, function (result) {
-             // 隱藏原本的整頁內容
-             $('#page-body-container').hide();
-
-             // 僅做右側內容更新
-             $('#content-area').html(result).fadeIn();
-         });
-     });
-
-    $('#submitCreateReportCategory').on('click', function () {
-      const data = {
-        reportCategoryName: $('#reportCategoryName').val(),
-        description: $('#description').val()
-      };
-
-      $.ajax({
-        url: '/Home/CreateReportCategory',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        success: function (res) {
-          if (res.success) {
-            alert(res.message);
-            $('#createReportCategoryModal').modal('hide');
-            $('#reportCategoryName').val('');
-            $('#description').val('');
-            loadCategoriesPartial();
-          } 
-          else {
-            alert("新增失敗：" + res.message);
-          }
-        },
-     });
-   });
-
-    $(document).on('click', '.cancel-createReportCategories', function (e) {
-      e.preventDefault();
-      $('#createReportCategoryModal').modal('hide');
-    });
-</script>
 

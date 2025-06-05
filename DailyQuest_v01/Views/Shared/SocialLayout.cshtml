@@ -231,6 +231,7 @@
     <!-- ============================================================== -->
     <!-- End Wrapper -->
     <!-- ============================================================== -->
+    
     <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
@@ -268,10 +269,168 @@
             });
         }
 
-                $(document).on('click', '.load-categories', function (e) {
+          $(document).on('click', '.load-categories', function (e) {
             e.preventDefault();
             loadCategoriesPartial();
                 });
+        //載入新增貼文類別頁面CreatePostCategoryPartial  (新增檢舉類別使用Modal彈出視窗)
+          $(document).on('click', '.load-create-post-category', function (e) {
+                e.preventDefault();
+
+                $.get('@Url.Action("CreatePostCategory", "Home")', function (result) {
+                     // 隱藏原本的整頁內容
+                     $('#page-body-container').hide();
+
+                     // 僅做右側內容更新
+                     $('#content-area').html(result).fadeIn();
+                  });
+               });  
+
+        //載入編輯貼文類別頁面EditPostCategoryPartial
+          $(document).on('click', '.load-edit-post-category', function (e) {
+                e.preventDefault();
+                const id = $(this).attr('id');
+
+                $.get('@Url.Action("EditPostCategory", "Home")'+'/'+id, function (result) {
+                     // 隱藏原本的整頁內容
+                     $('#page-body-container').hide();
+
+                     // 僅做右側內容更新
+                     $('#content-area').html(result).fadeIn();
+                });
+         });
+        //載入編輯檢舉類別頁面EditReportCategoryPartial
+          $(document).on('click', '.load-edit-report-category', function (e) {
+               e.preventDefault();
+              const id = $(this).attr('id');
+
+              $.get('@Url.Action("EditReportCategory", "Home")' + '/' + id, function (result) {
+                  // 隱藏原本的整頁內容
+                  $('#page-body-container').hide();
+
+                  // 僅做右側內容更新
+                  $('#content-area').html(result).fadeIn();
+              });
+          });
+
+        //送出新增貼文類別資料按鈕
+          $(document).on('submit', '#createPostCategoryForm', function (e) {
+            e.preventDefault(); // 阻止預設提交跳頁
+
+            $.ajax({
+                url: '@Url.Action("CreatePostCategory", "Home")',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        alert(res.message);
+                        loadCategoriesPartial(); // 成功後重新載入列表
+                    } else {
+                        alert(res.message);
+                    }
+                },
+            });
+        });
+        //送出新增檢舉類別按鈕
+          $(document).on('submit', '#createReportCategoryForm', function (e) {
+                e.preventDefault(); // 阻止預設提交跳頁
+
+                $.ajax({
+                    url: '@Url.Action("CreateReportCategory", "Home")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (res) {
+                        if (res.success) {
+                            alert(res.message);
+                            $('.modal-backdrop').remove();
+                            $('body').removeClass('modal-open');
+                            loadCategoriesPartial(); // 成功後重新載入列表
+                        } else {
+                            alert(res.message);
+                        }
+                    },
+                });
+            });
+        //送出編輯檢舉類別資料按鈕
+          $(document).on('submit', '#editReportCategoryForm', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '@Url.Action("EditReportCategory", "Home")',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        alert(res.message);
+                        loadCategoriesPartial(); // 成功後重新載入列表
+                    } else {
+                        alert(res.message);
+                    }
+                }
+            });
+        });
+        //送出編輯貼文類別資料按鈕
+          $(document).on('submit', '#editPostCategoryForm', function (e) {
+            e.preventDefault(); // 阻止預設提交跳頁
+            $.ajax({
+                url: '@Url.Action("EditPostCategory", "Home")',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        alert(res.message);
+                        loadCategoriesPartial(); // 成功後重新載入列表
+                    } else {
+                        alert(res.message);
+                    }
+                },
+            });
+        });
+
+        //刪除貼文類別
+          $(document).on('click', '.btn-delete-post', function () {
+        const id = $(this).data('id');
+             if (!confirm("你確定要刪除這個分類嗎？")) return;
+
+            $.ajax({
+                    url: "https://localhost:7131/API/DeletePostCategory/"+id,
+                type: 'DELETE',
+                success: function (data) {
+                    if (data.success) {
+                        $(`#row-${id}`).remove();
+                        alert("貼文類別刪除成功！編號為 "+id);
+                    } else {
+                        alert(data.message || "刪除失敗");
+                    }
+                },
+
+            });
+        });
+        //刪除檢舉類別
+          $(document).on('click', '.btn-delete-report', function () {
+            const id = $(this).data('id');
+                 if (!confirm("你確定要刪除這個檢舉項目嗎？")) return;
+                $.ajax({
+                            url: "https://localhost:7131/API/DeleteReportCategory/"+id,
+                    type: 'DELETE',
+                    success: function (data) {
+                        if (data.success) {
+                            $(`#row-${id}`).remove();
+                            alert("檢舉類別項目刪除成功！編號為 "+id);
+                        } else {
+                            alert(data.message || "刪除失敗");
+                        }
+                    },
+
+                });
+            });
+
+        //取消按鈕
+          $(document).on('click', '#cancel', function (e) {
+           e.preventDefault();
+           $('#createReportCategoryModal').modal('hide');
+         });
+
     </script>
 </body>
 </html>
