@@ -166,17 +166,9 @@
                                     </a>
                                 </li>
                                 <li class="sidebar-item">
-                                    <a class="sidebar-link"
-                                       asp-controller="PostReport" asp-action="Index">
+                                       <a href="#" class="sidebar-link load-reportManage">
                                         <i class="fas fa-meh"></i>
                                         <span class="hide-menu">檢舉管理</span>
-                                    </a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a class="sidebar-link"
-                                       asp-controller="Post" asp-action="Index">
-                                        <i class="fas fa-list-ul"></i>
-                                        <span class="hide-menu">檢視貼文及留言</span>
                                     </a>
                                 </li>
                             </ul>
@@ -269,10 +261,24 @@
             });
         }
 
+        function loadReportManagePartial(){
+            $.get('@Url.Action("Index", "ReportManage")', function (html) {
+                $('#page-body-container').hide();
+                $('#content-area').html(html).fadeIn();
+            });
+        }
+
           $(document).on('click', '.load-categories', function (e) {
-            e.preventDefault();
-            loadCategoriesPartial();
+                e.preventDefault();
+                loadCategoriesPartial();
                 });
+          
+            $(document).on('click', '.load-reportManage', function (e) {
+                e.preventDefault();
+                loadReportManagePartial();
+                });
+
+
         //載入新增貼文類別頁面CreatePostCategoryPartial  (新增檢舉類別使用Modal彈出視窗)
           $(document).on('click', '.load-create-post-category', function (e) {
                 e.preventDefault();
