@@ -237,7 +237,7 @@ namespace DailyQuest_v01.Controllers
                     workSheet.Cells[rowIndex, 7].Value = allTasks[row].TaskResultName;
                 }
                 var excelBytes = excelfile.GetAsByteArray();
-                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", currenttasks.FileName);
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             }
         }
     }
