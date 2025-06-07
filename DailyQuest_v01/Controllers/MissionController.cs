@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using NuGet.Protocol;
+using OfficeOpenXml;
 using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.Threading.Tasks;
@@ -210,6 +211,34 @@ namespace DailyQuest_v01.Controllers
                 TaskResultName = task.TaskResult.TaskResultName
             }).ToList();
             return Json(model);
+        }
+        //匯出成excel檔案
+        [HttpPost]
+        public IActionResult ExportExcel([FromBody] ExportFileDTO currenttasks) {
+            //必要EPPlus套件_設定非商業用途授權
+            ExcelPackage.License.SetNonCommercialOrganization("My Noncommercial organization");
+            using (var excelfile = new ExcelPackage()){
+                var workSheet = excelfile.Workbook.Worksheets.Add("AllTasks");
+                var allTasks = currenttasks.AllTasks;
+                var headerName = currenttasks.HeaderName;
+                for (int i = 0; i < headerName.Count; i++)
+                {
+                    workSheet.Cells[1, i + 1].Value = headerName[i];
+                }
+                for (int row = 0; row < allTasks.Count; row++)
+                {
+                    int rowIndex = row + 2; // 第一列為標題列，內容從第二列開始
+                    workSheet.Cells[rowIndex, 1].Value = allTasks[row].TaskTypeName;
+                    workSheet.Cells[rowIndex, 2].Value = allTasks[row].TaskLabelName;
+                    workSheet.Cells[rowIndex, 3].Value = allTasks[row].TaskContent;
+                    workSheet.Cells[rowIndex, 4].Value = allTasks[row].ExpectDate.ToString("yyyy-MM-dd");
+                    workSheet.Cells[rowIndex, 5].Value = allTasks[row].SetPeriod;
+                    workSheet.Cells[rowIndex, 6].Value = allTasks[row].CreateDate.ToString("yyyy-MM-dd");
+                    workSheet.Cells[rowIndex, 7].Value = allTasks[row].TaskResultName;
+                }
+                var excelBytes = excelfile.GetAsByteArray();
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", currenttasks.FileName);
+            }
         }
     }
 }

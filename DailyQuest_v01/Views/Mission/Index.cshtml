@@ -5,11 +5,20 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <h1>任務清單</h1>
 <div class="row">
-    <div class="col-4">
+    <div class="col-4 align-middle">
         <button type="button" class="btn btn-primary" id="createtask">新增任務</button>
     </div>
-    <div class="col-4"></div>
-    <div class="col-4">
+    <div class="col-4 align-middle"></div>
+    <div class="col-1 d-flex align-items-end justify-content-end" style="height: 100%">
+        <i class="fa-sharp fa-solid fa-file-excel fa-2x"
+           style="color: #43b805; margin-bottom: 5px;"
+           data-bs-toggle="tooltip"
+           data-bs-placement="top"
+           data-bs-title="匯出 Excel"
+           id="exportExcel">
+       </i>
+    </div>
+    <div class="col-3 align-middle">
         <input type="search" class="form-control" id="inputSearch" placeholder="關鍵字搜尋" />
     </div>
 </div>
@@ -175,6 +184,9 @@
 @section Scripts{
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
+        //Bootstrap提示框(tooltip)導入的前置作業
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
         //新增任務button_彈出介面
         const btnsubmit = document.querySelector('#createtask');
         btnsubmit.addEventListener('click', () => {
@@ -408,7 +420,27 @@
             else{
                 initFrontpage();
             }
-        });  
+        });
+        //匯出資料並轉成excel檔
+        document.getElementById('exportExcel').addEventListener('click', async() => {
+            const response = await fetch(`@Url.Content("~/Mission/ExportExcel")`, {
+               method:'POST',
+               headers:{'content-Type': 'application/json'},
+               body: JSON.stringify({
+                   AllTasks: currentTasks
+               })
+            });
+            const datas = await response.blob();
+            const url = window.URL.createObjectURL(datas);
+            //隱形的<a>，
+            const downlink = document.createElement('a');
+            downlink.href = url;
+            downlink.download = "AllTasks_" + formatDate(new Date()) + ".xlsx";
+            document.body.appendChild(downlink);
+            downlink.click();
+            window.URL.revokeObjectURL(url);
+            downlink.remove();
+        });
     </script>
 }
 
