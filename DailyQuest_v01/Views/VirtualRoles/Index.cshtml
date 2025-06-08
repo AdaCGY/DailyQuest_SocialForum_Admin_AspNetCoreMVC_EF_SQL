@@ -12,9 +12,12 @@
     <a asp-action="Create">新增紀錄</a>
 </p>
 
-<table class="table">
+<table class="table table-success table-striped table-bordered">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RoleId)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.RoleName)
             </th>
@@ -36,6 +39,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoleId)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.RoleName)
             </td>
