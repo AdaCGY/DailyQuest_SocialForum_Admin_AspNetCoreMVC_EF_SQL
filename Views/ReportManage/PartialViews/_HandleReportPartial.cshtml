@@ -1,0 +1,35 @@
+﻿@model DailyQuest_v01.Models.Report
+
+<h5>標題：@Model.Post.Title</h5>
+<p>內容：@Model.Post.PostsContent</p>
+<p>發文者：@Model.Post.Member.Username</p> @* 或 MemberId *@
+
+<form id="process-form">
+    <input type="hidden" name="reportId" value="@Model.ReportId" />
+
+    <div class="mb-2">
+        <label>處理結果：</label><br />
+        <input type="radio" name="result" value="Approved" /> 核准檢舉
+        <input type="radio" name="result" value="Rejected" /> 駁回檢舉
+    </div>
+
+    <div class="mb-2">
+        <label>處理說明：</label>
+        <textarea name="comment" class="form-control" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">送出</button>
+</form>
+
+<script>
+    $('#process-form').on('submit', function (e) {
+        e.preventDefault();
+        $.post('/ReportManage/ProcessReport', $(this).serialize(), function (res) {
+            if (res.success) {
+                alert('處理完成！');
+                location.reload(); // 或只刷新列表區塊
+            }
+        });
+    });
+</script>
+
