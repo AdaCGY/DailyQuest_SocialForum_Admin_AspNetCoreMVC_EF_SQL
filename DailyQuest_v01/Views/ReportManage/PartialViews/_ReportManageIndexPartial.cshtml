@@ -1,108 +1,85 @@
 ﻿@model DailyQuest_v01.Models.ViewModels.ReportsManageViewModels
-<div class="page-breadcrumb">
-    <div class="row">
-        <div class="col-12 d-flex no-block align-items-center">
-            <div class="pt-2 pb-2">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0" style="background-color: transparent; font-size: 1.1rem;">
-                        <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="SocialIndex" class="text-secondary text-decoration-none">社交論壇管理</a>
-                        </li>
-                        <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">檢舉管理</li>
-                    </ol>
-                </nav>
+
+<div class="table-responsive">
+    <div id="zero_config_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+
+        <!-- ✅ 狀態篩選器 -->
+        <div class="row mb-3">
+            <div class="col-sm-12 col-md-6">
+                <div class="form-group">
+                    <label>
+                        狀態篩選：
+                        <select id="statusFilter" class="form-control form-control-sm" data-selected="@Model.SelectedStatus">
+                            <option value="">全部</option>
+                            <option value="Pending">待處理</option>
+                            <option value="Approved">成立</option>
+                            <option value="Rejected">駁回</option>
+                        </select>
+                    </label>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">論壇檢舉狀態</h5>
-        <div class="table-responsive">
-            <div id="zero_config_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
-                <div class="row">
-                    <div class="col-sm-12 col-md-6">
-                        <div class="form-group">
-                            <label>
-                                狀態篩選：<select id="statusFilter" class="form-control form-control-sm">
-                                    <option value="">全部</option>
-                                    <option value="處理">已處理</option>
-                                    <option value="待處理">待處理</option>
-                                </select>
-                            </label>
-                        </div>
-                    </div>
-                    @* <div class="col-sm-12 col-md-6">
-                        <div id="zero_config_filter" class="dataTables_filter">
-                             <label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="zero_config"></label>
-                        </div>
-                    </div> *@
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <table id="zero_config" class="table table-striped table-bordered dataTable" role="grid" aria-describedby="zero_config_info">
-                            <thead>
-                                <tr role="row">
-                                    <th class="sorting_asc" tabindex="0" aria-controls="zero_config" rowspan="1" colspan="1" aria-label="Name: activate to sort column descending" aria-sort="ascending">檢舉項目</th>
-                                    <th class="sorting" tabindex="0" aria-controls="zero_config" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" >被檢舉(貼文/留言)編號</th>
-                                    <th class="sorting" tabindex="0" aria-controls="zero_config" rowspan="1" colspan="1" aria-label="Office: activate to sort column ascending" >被檢舉會員</th>
-                                    <th class="sorting" tabindex="0" aria-controls="zero_config" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending">被檢舉時間</th>
-                                    <th class="sorting" tabindex="0" aria-controls="zero_config" rowspan="1" colspan="1" aria-label="Start date: activate to sort column ascending" >處理狀態</th>
-                                    <th class="sorting" tabindex="0" aria-controls="zero_config" rowspan="1" colspan="1" aria-label="Salary: activate to sort column ascending" >主責管理員ID</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.Reports)
-                                {
-                                    <tr role="row" class="odd">
-                                        <td class="sorting_1">@item.ReportCategoryName</td>
-                                        <td>
-                                            <a href="#" class="btn-handle-report" data-id="@item.ReportId">
-                                                @item.PostId
-                                            </a>
-                                        </td>
-                                        <td>@item.TargetMemberName</td>
-                                        <td>@item.ReportedAt.ToString("yyyy/MM/dd HH:mm:ss")</td>
-                                        <td>@item.StatusName</td>
-                                        <td>@item.AdminId</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="row">
-                    @{
-                        int currentPage = ViewBag.CurrentPage ?? 1; // 目前頁數
-                        int totalPages = ViewBag.TotalPages ?? 1;   // 總頁數
-                    }
-
-                    <div class="col-sm-12 col-md-6">
-                        <div class="dataTables_paginate paging_simple_numbers" id="zero_config_paginate">
-                            <ul class="pagination">
-
-                                <li class="paginate_button page-item @(currentPage == 1 ? "disabled" : "")" id="zero_config_previous">
-                                    <a href="#" aria-controls="zero_config" data-dt-idx="@(currentPage - 1)" tabindex="0" class="page-link">Previous</a>
-                                </li>
-
-                                @for (int i = 1; i <= totalPages; i++)
-                                {
-                                    <li class="paginate_button page-item @(i == currentPage ? "active" : "")">
-                                        <a href="#" aria-controls="zero_config" data-dt-idx="@i" tabindex="0" class="page-link">@i</a>
-                                    </li>
-                                }
-
-                                <li class="paginate_button page-item @(currentPage == totalPages ? "disabled" : "")" id="zero_config_next">
-                                    <a href="#" aria-controls="zero_config" data-dt-idx="@(currentPage + 1)" tabindex="0" class="page-link">Next</a>
-                                </li>
-
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-           </div>
+        <!-- ✅ 資料表格 -->
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="zero_config" class="table table-striped table-bordered dataTable" role="grid" aria-describedby="zero_config_info">
+                    <thead>
+                        <tr>
+                            <th>檢舉項目</th>
+                            <th>被檢舉(貼文/留言)編號</th>
+                            <th>被檢舉會員</th>
+                            <th>被檢舉時間</th>
+                            <th>處理狀態</th>
+                            <th>主責管理員ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Reports)
+                        {
+                            <tr>
+                                <td>@item.ReportCategoryName</td>
+                                <td>
+                                    <a href="#" class="btn-handle-report" data-id="@item.ReportId">@item.PostId</a>
+                                </td>
+                                <td>@item.TargetMemberName</td>
+                                <td>@item.ReportedAt.ToString("yyyy/MM/dd HH:mm:ss")</td>
+                                <td>@item.StatusName</td>
+                                <td>@item.AdminId</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        <!-- ✅ 分頁區塊 -->
+        <div class="row mt-3">
+            <div class="col-sm-12 col-md-6">
+                <div class="dataTables_paginate paging_simple_numbers" id="zero_config_paginate">
+                    <ul class="pagination">
+
+                        <li class="paginate_button page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                            <a href="#" class="page-link page-btn" data-page="@(Model.CurrentPage - 1)">Previous</a>
+                        </li>
+
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="paginate_button page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a href="#" class="page-link page-btn" data-page="@i">@i</a>
+                            </li>
+                        }
+
+                        <li class="paginate_button page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                            <a href="#" class="page-link page-btn" data-page="@(Model.CurrentPage + 1)">Next</a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+
 

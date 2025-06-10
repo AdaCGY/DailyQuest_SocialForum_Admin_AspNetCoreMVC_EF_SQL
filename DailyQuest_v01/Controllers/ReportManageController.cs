@@ -14,12 +14,33 @@ namespace DailyQuest_v01.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int? categoryId = null, string? SelectedStatus = "")
         {
-            var viewModel = new ReportsManageViewModels
+            var query = _context.Reports
+                .Include(r => r.Member)
+                .Include(r => r.Post)
+                .Include(r => r.ReportCategory)
+                .AsQueryable();
+
+            if (categoryId.HasValue)
             {
-                Reports = await _context.Reports
-                .Include(r=>r.Member).Include(r => r.Post).Include(r => r.ReportCategory).Select(r => new ReportListViewModels
+                query = query.Where(r => r.ReportCategoryId == categoryId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(SelectedStatus))
+            {
+                query = query.Where(r => r.Status == SelectedStatus);
+            }
+
+            int pageSize = 5;
+            int totalCount = await query.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            var pagedData = await query
+                .OrderByDescending(r => r.ReportedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(r => new ReportListViewModels
                 {
                     ReportId = r.ReportId,
                     MemberId = r.MemberId,
@@ -34,12 +55,21 @@ namespace DailyQuest_v01.Controllers
                     AdminComment = r.AdminComment,
                     Status = r.Status,
                     StatusName = r.Status == "Pending" ? "待處理"
-                    : r.Status == "Approved" ? "成立"
-                    : r.Status == "Rejected" ? "駁回"
-                    : "狀態不明，請檢查"
-                }).ToListAsync()
+                                 : r.Status == "Approved" ? "成立"
+                                 : r.Status == "Rejected" ? "駁回"
+                                 : "狀態不明，請檢查"
+                }).ToListAsync();
+
+            var vm = new ReportsManageViewModels
+            {
+                Reports = pagedData,
+                CurrentPage = page,
+                TotalPages = totalPages,
+                SelectedCategoryId = categoryId,
+                SelectedStatus = SelectedStatus
             };
-            return PartialView("~/Views/ReportManage/PartialViews/_ReportManageIndexPartial.cshtml",viewModel);
+
+            return PartialView("~/Views/ReportManage/PartialViews/_ReportManageIndexPartial.cshtml", vm);
         }
 
         [HttpGet]

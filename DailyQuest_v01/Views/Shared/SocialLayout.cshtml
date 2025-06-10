@@ -446,6 +446,54 @@
           });
 
 
+            // 每次 Partial View 載入後都要呼叫這段
+        function applyStatusFilterSelected() {
+            const select = document.getElementById("statusFilter");
+            if (!select) return;
+
+            const selected = select.dataset.selected;
+            if (selected) {
+                select.value = selected;
+            }
+        }
+
+        // 初次頁面載入時執行
+        document.addEventListener("DOMContentLoaded", function () {
+            applyStatusFilterSelected();
+        });
+        //檢舉處理狀態下拉選單
+        $(document).on('change', '#statusFilter', function () {
+            const selectedStatus = $(this).val();
+
+            $.get('@Url.Action("Index", "ReportManage")', { SelectedStatus: selectedStatus }, function (html) {
+                $('#content-area').html(html).fadeIn();
+
+                // 再次設定選單的狀態
+                setTimeout(() => {
+                    document.getElementById("statusFilter").value = selectedStatus;
+                }, 0); // 確保部分載入後才執行
+            });
+        });
+        //被檢舉貼文分頁顯示
+        $(document).on('click', '.page-btn', function (e) {
+            e.preventDefault();
+
+            const page = $(this).data('page');
+            const selectedStatus = $('#statusFilter').val();
+
+            $.get('@Url.Action("Index", "ReportManage")', {
+                page: page,
+                SelectedStatus: selectedStatus
+            }, function (html) {
+                $('#content-area').html(html).fadeIn();
+
+                // 重新設回選單狀態（因為 Partial View 是新的 DOM）
+                setTimeout(() => {
+                    $('#statusFilter').val(selectedStatus);
+                }, 0);
+            });
+        });
+
    </script>
 </body>
 </html>
