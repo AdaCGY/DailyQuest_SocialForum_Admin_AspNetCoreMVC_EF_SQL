@@ -51,7 +51,11 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="RoleId" />
-        <input type="submit" value="刪除" class="btn btn-danger" /> |
-        <a asp-action="Index">返回</a>
+        <input type="submit" value="刪除" class="btn btn-danger" /> 
+        @* <a asp-action="Index">返回</a> *@
     </form>
+</div>
+<br />
+<div>
+    <a asp-action="Index">返回</a>
 </div>

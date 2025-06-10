@@ -55,13 +55,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.LastModified)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.RoleId">編輯</a> |
-                <a asp-action="Details" asp-route-id="@item.RoleId">紀錄詳情</a> |
-                <a asp-action="Delete" asp-route-id="@item.RoleId">刪除</a>
+            <td class="text-center">
+                <a asp-action="Edit" asp-route-id="@item.RoleId">編輯</a> <br>
+                <a asp-action="Details" asp-route-id="@item.RoleId">紀錄詳情</a><br>
+                <a asp-action="Delete" asp-route-id="@item.RoleId">刪除</a><br>
             </td>
         </tr>
-        }
-        
+        } 
     </tbody>
 </table>

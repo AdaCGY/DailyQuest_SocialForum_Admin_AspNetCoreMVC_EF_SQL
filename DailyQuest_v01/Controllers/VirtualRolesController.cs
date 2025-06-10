@@ -6,16 +6,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DailyQuest_v01.Models;
+using Microsoft.Extensions.Hosting;
+using DailyQuest_v01.Models.ViewModel;
 
 namespace DailyQuest_v01.Controllers
 {
     public class VirtualRolesController : Controller
     {
         private readonly DailyQuestDbContext _context;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public VirtualRolesController(DailyQuestDbContext context)
+        public VirtualRolesController(DailyQuestDbContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
+            _hostEnvironment = hostEnvironment;
         }
 
         // GET: VirtualRoles
@@ -53,16 +57,45 @@ namespace DailyQuest_v01.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RoleId,RoleName,RoleDescription,RolePhoto,CreatedAt,LastModified")] VirtualRole virtualRole)
+        public async Task<IActionResult> Create(VirtualRoleViewModel virtualRole)
         {
-            if (ModelState.IsValid)
+            if (virtualRole.RolePhoto != null)
             {
-                _context.Add(virtualRole);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //檔案上傳的路徑
+                var filePath = Path.Combine(_hostEnvironment.WebRootPath, "VirtualRoles", virtualRole.RolePhoto.FileName);
+                //檔案上傳
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await virtualRole.RolePhoto.CopyToAsync(stream);
+                }
             }
-            return View(virtualRole);
+
+            VirtualRole _virtualRole = new VirtualRole()
+            {
+                RoleId = virtualRole.RoleId,
+                RoleName = virtualRole.RoleName,
+                RoleDescription = virtualRole.RoleDescription,
+                RolePhoto = virtualRole.RolePhoto?.FileName,
+                CreatedAt = virtualRole.CreatedAt,
+                LastModified = virtualRole.LastModified
+            };
+
+            await _context.VirtualRoles.AddAsync(_virtualRole);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Create");
         }
+
+        //public async Task<IActionResult> Create([Bind("RoleId,RoleName,RoleDescription,RolePhoto,CreatedAt,LastModified")] VirtualRole virtualRole)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(virtualRole);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(virtualRole);
+        //}
 
         // GET: VirtualRoles/Edit/5
         public async Task<IActionResult> Edit(int? id)
