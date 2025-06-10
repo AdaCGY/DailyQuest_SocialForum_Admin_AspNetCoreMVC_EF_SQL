@@ -45,6 +45,7 @@ namespace DailyQuest_v01.Controllers
             }; ;
             return View();
         }
+        //新增資料並回存至資料庫
         [HttpPost]
         public async Task<IActionResult> CreateTask(CreateTaskDTO singletask)
         {
@@ -181,7 +182,8 @@ namespace DailyQuest_v01.Controllers
         [HttpPost]
         public IActionResult Pagination([FromBody] PaginationDTO updatetasks) {
             int pagesize = 5;
-            var onepagetasks = updatetasks.AllTasks.Skip((updatetasks.CurrentPage - 1) * pagesize).Take(pagesize);
+            var onepagetasks = updatetasks.AllTasks.OrderByDescending(t => t.CreateDate)
+                .Skip((updatetasks.CurrentPage - 1) * pagesize).Take(pagesize);
             return Json(onepagetasks);
         }
         //各項欄位篩選資料
