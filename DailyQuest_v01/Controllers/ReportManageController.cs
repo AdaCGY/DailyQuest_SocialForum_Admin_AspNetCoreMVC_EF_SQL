@@ -19,11 +19,11 @@ namespace DailyQuest_v01.Controllers
             var viewModel = new ReportsManageViewModels
             {
                 Reports = await _context.Reports
-                .Include(r => r.Post).Include(r => r.ReportCategory).Select(r => new ReportListViewModels
+                .Include(r=>r.Member).Include(r => r.Post).Include(r => r.ReportCategory).Select(r => new ReportListViewModels
                 {
                     ReportId = r.ReportId,
                     MemberId = r.MemberId,
-                    TargetMemberId = r.Post.MemberId,
+                    TargetMemberName = r.Member.Username,
                     ReportCategoryId = r.ReportCategoryId,
                     ReportCategoryName = r.ReportCategory.ReportCategoryName,
                     PostId = r.PostId,
@@ -34,8 +34,8 @@ namespace DailyQuest_v01.Controllers
                     AdminComment = r.AdminComment,
                     Status = r.Status,
                     StatusName = r.Status == "Pending" ? "待處理"
-                    : r.Status == "Approved" ? "已處理"
-                    : r.Status == "Rejected" ? "檢舉未成立"
+                    : r.Status == "Approved" ? "成立"
+                    : r.Status == "Rejected" ? "駁回"
                     : "狀態不明，請檢查"
                 }).ToListAsync()
             };

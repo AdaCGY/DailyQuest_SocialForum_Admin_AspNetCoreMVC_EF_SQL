@@ -25,20 +25,19 @@
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>
-                                狀態篩選：
-                                <select id="statusFilter" class="form-control form-control-sm">
+                                狀態篩選：<select id="statusFilter" class="form-control form-control-sm">
                                     <option value="">全部</option>
                                     <option value="處理">已處理</option>
-                                    <option value="未處理">未處理</option>
+                                    <option value="待處理">待處理</option>
                                 </select>
                             </label>
                         </div>
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    @* <div class="col-sm-12 col-md-6">
                         <div id="zero_config_filter" class="dataTables_filter">
                              <label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="zero_config"></label>
                         </div>
-                    </div>
+                    </div> *@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
@@ -63,7 +62,7 @@
                                                 @item.PostId
                                             </a>
                                         </td>
-                                        <td>@item.TargetMemberId</td>
+                                        <td>@item.TargetMemberName</td>
                                         <td>@item.ReportedAt.ToString("yyyy/MM/dd HH:mm:ss")</td>
                                         <td>@item.StatusName</td>
                                         <td>@item.AdminId</td>
@@ -72,8 +71,37 @@
                             </tbody>
                         </table>
                     </div>
-                </div><div class="row"><div class="col-sm-12 col-md-5"><div class="dataTables_info" id="zero_config_info" role="status" aria-live="polite">Showing 51 to 57 of 57 entries</div></div><div class="col-sm-12 col-md-7"><div class="dataTables_paginate paging_simple_numbers" id="zero_config_paginate"><ul class="pagination"><li class="paginate_button page-item previous" id="zero_config_previous"><a href="#" aria-controls="zero_config" data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li><li class="paginate_button page-item "><a href="#" aria-controls="zero_config" data-dt-idx="1" tabindex="0" class="page-link">1</a></li><li class="paginate_button page-item "><a href="#" aria-controls="zero_config" data-dt-idx="2" tabindex="0" class="page-link">2</a></li><li class="paginate_button page-item "><a href="#" aria-controls="zero_config" data-dt-idx="3" tabindex="0" class="page-link">3</a></li><li class="paginate_button page-item "><a href="#" aria-controls="zero_config" data-dt-idx="4" tabindex="0" class="page-link">4</a></li><li class="paginate_button page-item "><a href="#" aria-controls="zero_config" data-dt-idx="5" tabindex="0" class="page-link">5</a></li><li class="paginate_button page-item active"><a href="#" aria-controls="zero_config" data-dt-idx="6" tabindex="0" class="page-link">6</a></li><li class="paginate_button page-item next disabled" id="zero_config_next"><a href="#" aria-controls="zero_config" data-dt-idx="7" tabindex="0" class="page-link">Next</a></li></ul></div></div></div>
-            </div>
+                </div>
+                <div class="row">
+                    @{
+                        int currentPage = ViewBag.CurrentPage ?? 1; // 目前頁數
+                        int totalPages = ViewBag.TotalPages ?? 1;   // 總頁數
+                    }
+
+                    <div class="col-sm-12 col-md-6">
+                        <div class="dataTables_paginate paging_simple_numbers" id="zero_config_paginate">
+                            <ul class="pagination">
+
+                                <li class="paginate_button page-item @(currentPage == 1 ? "disabled" : "")" id="zero_config_previous">
+                                    <a href="#" aria-controls="zero_config" data-dt-idx="@(currentPage - 1)" tabindex="0" class="page-link">Previous</a>
+                                </li>
+
+                                @for (int i = 1; i <= totalPages; i++)
+                                {
+                                    <li class="paginate_button page-item @(i == currentPage ? "active" : "")">
+                                        <a href="#" aria-controls="zero_config" data-dt-idx="@i" tabindex="0" class="page-link">@i</a>
+                                    </li>
+                                }
+
+                                <li class="paginate_button page-item @(currentPage == totalPages ? "disabled" : "")" id="zero_config_next">
+                                    <a href="#" aria-controls="zero_config" data-dt-idx="@(currentPage + 1)" tabindex="0" class="page-link">Next</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+           </div>
         </div>
     </div>
 </div>

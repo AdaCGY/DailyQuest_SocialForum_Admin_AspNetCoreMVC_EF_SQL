@@ -7,7 +7,7 @@
 
         public int MemberId { get; set; } // 檢舉者 ID
 
-        public int TargetMemberId { get; set; } // 被檢舉的貼文之作者 ID
+        public string TargetMemberName { get; set; } // 被檢舉的貼文之作者
 
         public int ReportCategoryId { get; set; }
 
