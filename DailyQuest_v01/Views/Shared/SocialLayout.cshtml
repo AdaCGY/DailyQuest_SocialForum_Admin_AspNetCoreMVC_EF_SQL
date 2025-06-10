@@ -494,6 +494,31 @@
             });
         });
 
+        function loadReportManagePartial() {
+            $.get('@Url.Action("Index", "ReportManage")', function (html) {
+            $('#page-body-container').hide();
+            $('#content-area').html(html).fadeIn();
+            });
+        }
+
+       $(document).on('submit', '#handleReportForm', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: '@Url.Action("HandleReport", "ReportManage")',
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function (res) {
+                if (res.success) {
+                    alert("✅ " + res.success);
+                    loadReportManagePartial(); // ✅ 回主列表
+                } else {
+                    alert("❌ " + res.message);
+                }
+            },
+        });
+    });
+
    </script>
 </body>
 </html>
