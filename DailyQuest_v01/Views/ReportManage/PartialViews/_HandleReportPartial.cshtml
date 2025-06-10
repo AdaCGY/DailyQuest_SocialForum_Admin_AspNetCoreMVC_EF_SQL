@@ -46,7 +46,7 @@
         $.post('/ReportManage/HandleReport', $(this).serialize(), function (res) {
             if (res.success) {
                 alert('處理完成！');
-                location.reload(); // 或只刷新列表區塊
+                loadReportManagePartial(); // 或只刷新列表區塊
             }
         });
     });
