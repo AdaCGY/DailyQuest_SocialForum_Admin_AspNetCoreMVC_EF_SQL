@@ -433,6 +433,7 @@
           $(document).on('click', '#cancel', function (e) {
            e.preventDefault();
            $('#createReportCategoryModal').modal('hide');
+           loadCategoriesPartial();
          });
          
          //處理檢舉按鈕
