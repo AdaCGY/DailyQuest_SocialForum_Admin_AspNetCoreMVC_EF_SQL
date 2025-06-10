@@ -22,9 +22,10 @@ namespace DailyQuest_v01.Controllers
             return View();
         }
 
-        public IActionResult SocialIndex()
+        public async Task<IActionResult> SocialIndex()
         {
-            return View();
+            var admin = await _context.Admins.Include(r=>r.Member).FirstOrDefaultAsync();
+            return View(admin);
         }
 
         [HttpGet]

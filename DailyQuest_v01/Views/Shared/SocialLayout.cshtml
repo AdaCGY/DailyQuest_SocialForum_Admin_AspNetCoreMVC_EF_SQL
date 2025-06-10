@@ -101,26 +101,24 @@
                 <!-- ============================================================== -->
                 <!-- User profile and search -->
                 <!-- ============================================================== -->
-               <ul class="navbar-nav ms-auto">
-                 <li class="nav-item dropdown">
-                    <a class="
-                    nav-link
-                    dropdown-toggle
-                    text-muted
-                    waves-effect waves-dark
-                    pro-pic
-                  " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="../assets/images/users/1.jpg" alt="user" class="rounded-circle" width="31">
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end user-dd animated" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="javascript:void(0)"><i class="mdi mdi-account me-1 ms-1"></i> 設定</a>
-                        <a class="dropdown-item" href="javascript:void(0)"><i class="mdi mdi-wallet me-1 ms-1"></i> 通知</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="javascript:void(0)"><i class="fa fa-power-off me-1 ms-1"></i> 登出</a>
-                        <div class="dropdown-divider"></div>
+                    <ul class="navbar-nav ms-auto d-flex align-items-center">
+                        <li class="nav-item me-2">
+                            <span class="text-white fw-bold">管理者：ＸＸＸ　您好</span>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../assets/images/users/1.jpg" alt="user" class="rounded-circle" width="31">
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end user-dd animated" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="javascript:void(0)"><i class="mdi mdi-account me-1 ms-1"></i> 設定</a>
+                                <a class="dropdown-item" href="javascript:void(0)"><i class="mdi mdi-wallet me-1 ms-1"></i> 通知</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="javascript:void(0)"><i class="fa fa-power-off me-1 ms-1"></i> 登出</a>
+                                <div class="dropdown-divider"></div>
+                            </ul>
+                        </li>
                     </ul>
-                 </li>
-               </ul>
+
                 <!-- ============================================================== -->
                 <!-- User profile and search -->
                 <!-- ============================================================== -->
@@ -436,8 +434,18 @@
            e.preventDefault();
            $('#createReportCategoryModal').modal('hide');
          });
+         
+         //處理檢舉按鈕
+         $(document).on('click','.btn-handle-report', function (e) {
+            e.preventDefault();
+            const reportId = $(this).data('id');
+            $.get('@Url.Action("HandleReport", "ReportManage")' + '/' + reportId, function (result) {
+                $('#content-area').html(result).fadeIn();
+            });
+          });
 
-    </script>
+
+   </script>
 </body>
 </html>
 
