@@ -1,0 +1,54 @@
+﻿@model DailyQuest_v01.Models.ViewModels.HandleReportViewModel
+
+    <div class="card">
+        <div class="card-header">
+            被檢舉文章內容
+        </div>
+        <div class="card-body">
+        <h5 class="card-title">標題：@Model.title</h5>
+            <p class="card-text">@Model.postContent</p>
+        </div>
+    </div>
+
+    <!-- 審核表單區塊 -->
+<div class="card text-center">
+    <div class="card-header">
+        審核
+    </div>
+    <div class="card-body">
+        <form id="process-form">
+            <input type="hidden" name="reportId" value="@Model.reportId" />
+
+            <div class="mb-3">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="result" value="Approved" id="approveRadio">
+                    <label class="form-check-label" for="approveRadio">核准</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="result" value="Rejected" id="rejectRadio">
+                    <label class="form-check-label" for="rejectRadio">駁回</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="comment" class="form-label">說明：</label>
+                <textarea name="comment" id="comment" class="form-control" rows="4" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">確認</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    $('#process-form').on('submit', function (e) {
+        e.preventDefault();
+        $.post('/ReportManage/HandleReport', $(this).serialize(), function (res) {
+            if (res.success) {
+                alert('處理完成！');
+                location.reload(); // 或只刷新列表區塊
+            }
+        });
+    });
+</script>
+

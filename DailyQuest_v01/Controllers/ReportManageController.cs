@@ -41,5 +41,42 @@ namespace DailyQuest_v01.Controllers
             };
             return PartialView("~/Views/ReportManage/PartialViews/_ReportManageIndexPartial.cshtml",viewModel);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> HandleReport(int id)
+        {
+            var report = await _context.Reports
+            .Include(r => r.Post)
+            .ThenInclude(p => p.Member)
+            .FirstOrDefaultAsync(r => r.ReportId == id);
+
+            if (report == null) return Content("找不到資料");
+
+            var vm = new HandleReportViewModel
+            {
+                reportId = report.ReportId,
+                title = report.Post.Title,
+                postContent = report.Post.PostsContent,
+                memberID = report.Post.MemberId,
+                memberName = report.Post.Member.Username
+            };
+
+            return PartialView("~/Views/ReportManage/PartialViews/_HandleReportPartial.cshtml", vm);
+        }
+        [HttpPost]
+        public IActionResult HandleReport(int reportId, string result, string comment)
+        {
+            var report = _context.Reports.FirstOrDefault(r => r.ReportId == reportId);
+            if (report == null) return Json(new { success = false, message = "找不到檢舉資料" });
+
+            report.Status = result;
+            report.AdminComment = comment;
+            report.ProcessedAt = DateTime.Now;
+            report.AdminId = 1; // ← 這裡你可以用登入者資訊填上
+
+            _context.SaveChanges();
+
+            return Json(new { success = "結案完成" });
+        }
     }
 }
