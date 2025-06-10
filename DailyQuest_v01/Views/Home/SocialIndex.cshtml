@@ -3,16 +3,67 @@
     Layout = "~/Views/Shared/SocialLayout.cshtml";
 }
 
+<style>
+    .dashboard-wrapper {
+        max-width: 800px;
+        margin-left: 2rem; 
+        margin-right: 50rem; 
+    }
+</style>
+
+<!-- 🔔 頁首標題照舊，可放外層 -->
 <div class="page-breadcrumb">
     <div class="row">
         <div class="col-12 d-flex no-block align-items-center">
-                <div class="pt-2 pb-2">
-                    <nav aria-label="breadcrumb">
-                    <h5 class="card-title">Notificaion</h5>
+            <div class="pt-2 pb-2">
+                <nav aria-label="breadcrumb">
+                    <h5 class="card-title">Notification</h5>
                 </nav>
             </div>
         </div>
-            <div class="alert alert-danger" role="alert">尚有檢舉項目未處理</div>
+    </div>
+</div>
+
+<!-- ✅ 所有內容都包進這裡 -->
+<div class="dashboard-wrapper">
+
+    <!-- 🔔 警示 -->
+    @if (ViewBag.HasPendingReports == true)
+    {
+        <div class="alert alert-danger" role="alert">⚠️ 尚有檢舉項目未處理</div>
+    }
+    else
+    {
+        <div class="alert alert-success" role="alert">✅ 所有檢舉已處理完畢</div>
+    }
+
+    <!-- 📊 統計卡片 -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <h5 class="card-title mb-0">論壇目前概況</h5>
+        </div>
+        <table class="table mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">項目</th>
+                    <th scope="col">數量</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>今日貼文數</td>
+                    <td>@ViewBag.TodayPostCount</td>
+                </tr>
+                <tr>
+                    <td>今日檢舉數</td>
+                    <td>@ViewBag.TodayReportCount</td>
+                </tr>
+                <tr>
+                    <td>未處理檢舉</td>
+                    <td>@ViewBag.PendingReportCount</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 

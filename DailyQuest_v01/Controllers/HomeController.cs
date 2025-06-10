@@ -24,9 +24,35 @@ namespace DailyQuest_v01.Controllers
 
         public async Task<IActionResult> SocialIndex()
         {
-            var admin = await _context.Admins.Include(r=>r.Member).FirstOrDefaultAsync();
+            var admin = await _context.Admins
+        .Include(a => a.Member)
+        .FirstOrDefaultAsync(); // 安砞Τ Admin
+
+            bool hasPendingReports = await _context.Reports.AnyAsync(r => r.Status == "Pending");
+            ViewBag.HasPendingReports = hasPendingReports;
+
+            // 参璸戈
+            var today = DateTime.Today;
+
+            // さら禟ゅ羆计
+            int todayPostCount = await _context.Posts
+                .CountAsync(p => p.CreatedAt >= today);
+
+            // さら浪羭计秖
+            int todayReportCount = await _context.Reports
+                .CountAsync(r => r.ReportedAt >= today);
+
+            // ﹟ゼ矪瞶浪羭计秖
+            int pendingReportCount = await _context.Reports
+                .CountAsync(r => r.Status == "Pending");
+
+            ViewBag.TodayPostCount = todayPostCount;
+            ViewBag.TodayReportCount = todayReportCount;
+            ViewBag.PendingReportCount = pendingReportCount;
+
             return View(admin);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Categories()
