@@ -1,0 +1,105 @@
+﻿@model DailyQuest_v01.Models.ViewModels.ReportsManageViewModels
+
+<div class="page-breadcrumb">
+    <div class="row">
+        <div class="col-12 d-flex no-block align-items-center">
+            <div class="pt-2 pb-2">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0" style="background-color: transparent; font-size: 1.1rem;">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="SocialIndex" class="text-secondary text-decoration-none">社交論壇管理</a>
+                        </li>
+                        <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">檢舉管理</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="table-responsive">
+       <div id="zero_config_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+        <!-- ✅ 狀態篩選器 -->
+        <div class="row mb-3">
+            <div class="col-sm-12 col-md-6">
+                <div class="form-group">
+                    <label>
+                        狀態篩選：
+                        <select id="statusFilter" class="form-control form-control-sm" data-selected="@Model.SelectedStatus">
+                            <option value="">全部</option>
+                            <option value="Pending">待處理</option>
+                            <option value="Approved">成立</option>
+                            <option value="Rejected">駁回</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ 資料表格 -->
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="zero_config" class="table table-striped table-bordered dataTable" role="grid" aria-describedby="zero_config_info">
+                    <thead>
+                        <tr>
+                            <th>檢舉項目</th>
+                            <th>被檢舉(貼文/留言)編號</th>
+                            <th>被檢舉會員</th>
+                            <th>被檢舉時間</th>
+                            <th>處理狀態</th>
+                            <th>主責管理員ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Reports)
+                        {
+                            <tr>
+                                <td>@item.ReportCategoryName</td>
+                                <td>
+                                    <a href="#" class="btn-handle-report" data-id="@item.ReportId">@item.PostId</a>
+                                </td>
+                                <td>@item.TargetMemberName</td>
+                                <td>@item.ReportedAt.ToString("yyyy/MM/dd HH:mm:ss")</td>
+                                <td>@item.StatusName</td>
+                                <td>@item.AdminId</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ✅ 分頁區塊 -->
+        <div class="row mt-3">
+            <div class="col-sm-12 col-md-6">
+                <div class="dataTables_paginate paging_simple_numbers" id="zero_config_paginate">
+                    <ul class="pagination">
+
+                        <li class="paginate_button page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                            <a href="#" class="page-link page-btn" data-page="@(Model.CurrentPage - 1)">Previous</a>
+                        </li>
+
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="paginate_button page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a href="#" class="page-link page-btn" data-page="@i">@i</a>
+                            </li>
+                        }
+
+                        <li class="paginate_button page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                            <a href="#" class="page-link page-btn" data-page="@(Model.CurrentPage + 1)">Next</a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+       </div>
+    </div>
+ </div>
+</div>
+
+
