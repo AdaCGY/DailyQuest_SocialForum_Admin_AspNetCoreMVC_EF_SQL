@@ -9,6 +9,7 @@ namespace DailyQuest_v01.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly DailyQuestDbContext _context;
 
         private readonly DailyQuestDbContext _context;
         public HomeController(ILogger<HomeController> logger,DailyQuestDbContext context)
@@ -184,6 +185,11 @@ namespace DailyQuest_v01.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult StoreIndex()
         {
             return View();
         }

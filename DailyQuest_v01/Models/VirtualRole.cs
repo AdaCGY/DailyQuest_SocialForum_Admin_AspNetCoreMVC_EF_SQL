@@ -16,4 +16,5 @@ public partial class VirtualRole
     public DateTime CreatedAt { get; set; }
 
     public DateTime? LastModified { get; set; }
+
 }

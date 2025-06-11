@@ -1,0 +1,66 @@
+﻿@model IEnumerable<DailyQuest_v01.Models.VirtualRole>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>虛擬角色管理</h1>
+
+<hr>
+
+<p>
+    <a asp-action="Create">新增紀錄</a>
+</p>
+
+<table class="table table-striped table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>角色編號</th>
+            <th>角色名稱</th>
+            <th>角色描述
+                @* @Html.DisplayNameFor(model => model.RoleDescription) *@
+            </th>
+            <th>
+                角色照片
+                @* @Html.DisplayNameFor(model => model.RolePhoto) *@
+            </th>
+            <th>創立時間
+
+                @* @Html.DisplayNameFor(model => model.CreatedAt) *@
+            </th>
+            <th>修改時間
+                @* @Html.DisplayNameFor(model => model.LastModified) *@
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoleId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoleName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoleDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RolePhoto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastModified)
+            </td>
+            <td class="text-center">
+                <a asp-action="Edit" asp-route-id="@item.RoleId">編輯</a> <br>
+                <a asp-action="Details" asp-route-id="@item.RoleId">紀錄詳情</a><br>
+                <a asp-action="Delete" asp-route-id="@item.RoleId">刪除</a><br>
+            </td>
+        </tr>
+        } 
+    </tbody>
+</table>

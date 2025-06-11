@@ -1,0 +1,60 @@
+﻿@model DailyQuest_v01.Models.VirtualRole
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>虛擬角色詳情</h1>
+
+<div>
+    @* <h4>VirtualRole</h4> *@
+    <hr />
+    <dl class="row ">
+        <dt class="col-sm-2 mb-4">
+            角色編號
+            @* @Html.DisplayNameFor(model => model.RoleId) *@
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RoleId)
+        </dd>
+        <dt class="col-sm-2 mb-4">
+            角色名稱
+            @* @Html.DisplayNameFor(model => model.RoleName) *@
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RoleName)
+        </dd>
+        <dt class="col-sm-2 mb-4">
+            角色描述
+            @* @Html.DisplayNameFor(model => model.RoleDescription) *@
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RoleDescription)
+        </dd>
+        <dt class="col-sm-2 mb-4">
+            角色照片
+            @* @Html.DisplayNameFor(model => model.RolePhoto) *@
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RolePhoto)
+        </dd>
+        <dt class="col-sm-2 mb-4">
+            創立時間
+            @* @Html.DisplayNameFor(model => model.CreatedAt) *@
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+        <dt class="col-sm-2 mb-4">
+            修改時間
+            @* @Html.DisplayNameFor(model => model.LastModified) *@
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LastModified)
+        </dd>
+    </dl>
+</div>
+<div>
+    @* <a asp-action="Edit" asp-route-id="@Model?.RoleId">Edit</a> *@
+    <a asp-action="Index">返回</a>
+</div>
